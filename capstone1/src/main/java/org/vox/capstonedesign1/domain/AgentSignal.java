@@ -9,7 +9,7 @@ import lombok.Builder;
 
 import java.time.LocalDateTime;
 
-@Entity // 엔티티 지정
+@Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED) // 기본 생성자
 @Table(name = "agent_signal")
