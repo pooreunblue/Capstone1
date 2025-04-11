@@ -13,12 +13,12 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class EstimationSignal {
+public class EstimatedStatus {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long signalId;
+    private Long statusId;
 
-    @Column(name = "signal_infomation", nullable = false)
-    private String signalInformation;
+    @Column(name = "status_infomation", nullable = false)
+    private String statusInformation;
 }
