@@ -17,7 +17,7 @@ public class EstimationSignal {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long signalId;
 
     @Column(name = "signal_infomation", nullable = false)
     private String signalInformation;
