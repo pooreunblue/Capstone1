@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 public class AgentSignalRequest {
 
     private Long deviceId;
-    private Long signalId;
+    private Long statusId;
     private String timeStamp;
 
 }
