@@ -13,12 +13,12 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Incident {
+public class Signal {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "incident_name", nullable = false)
-    private String incidentName;
+    @Column(name = "signal_infomation", nullable = false)
+    private String signalInformation;
 }
