@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Signal {
+public class EstimationSignal {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

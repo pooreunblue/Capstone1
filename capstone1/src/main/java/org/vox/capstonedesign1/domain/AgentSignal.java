@@ -26,15 +26,15 @@ public class AgentSignal {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "signal_id", nullable = false)
-    private Signal signal;
+    private EstimationSignal estimationSignal;
 
     @Column(name = "time_stamp", nullable = false)
     private LocalDateTime timeStamp;
 
     @Builder
-    public AgentSignal(Device device, Signal signal, LocalDateTime timeStamp) {
+    public AgentSignal(Device device, EstimationSignal estimationSignal, LocalDateTime timeStamp) {
         this.device = device;
-        this.signal = signal;
+        this.estimationSignal = estimationSignal;
         this.timeStamp = timeStamp;
     }
 }
