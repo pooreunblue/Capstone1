@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 import org.vox.capstonedesign1.domain.EstimationSignal;
 
 @Repository
-public interface SignalRepository extends JpaRepository<EstimationSignal, Long> {
+public interface EstimationSignalRepository extends JpaRepository<EstimationSignal, Long> {
 }
