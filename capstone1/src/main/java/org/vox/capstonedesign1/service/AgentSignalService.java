@@ -36,4 +36,16 @@ public class AgentSignalService {
                 .build();
         return agentSignalRepository.save(agentSignal);
     }
+
+    public Optional<AgentSignal> findById(Long id) {
+        return agentSignalRepository.findById(id);
+    }
+
+    public List<AgentSignal> findAllByDeviceId(Long deviceId) {
+        return agentSignalRepository.findAllByDevice_DeviceId(deviceId);
+    }
+
+    public List<AgentSignal> findAllSortedInDescendingOrder() {
+        return agentSignalRepository.findAllByOrderByTimeStampDesc();
+    }
 }
