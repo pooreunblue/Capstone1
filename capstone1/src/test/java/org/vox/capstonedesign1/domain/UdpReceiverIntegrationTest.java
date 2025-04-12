@@ -19,7 +19,7 @@ class UdpReceiverSocketTest {
         // Given
         AgentSignalService agentSignalService = mock(AgentSignalService.class);
         UdpReceiver receiver = new UdpReceiver(agentSignalService);
-        String json = "{\"agentId\":42,\"signal\":\"ALIVE\"}";
+        String json = "{\"deviceId\":42,\"statusId\":\"2\", \"timeStamp\": \"2025-04-12T12:48:00\"}";
         byte[] testData = json.getBytes("UTF-8");
         MockDatagramSocket mockSocket = new MockDatagramSocket(testData);
         receiver.setSocketSupplier(() -> mockSocket);
