@@ -18,9 +18,6 @@ public class Device {
     @Column(name = "device_name", nullable = false)
     private String deviceName;
 
-    @Column(name = "frequency", nullable = true)
-    private String frequency;
-
-    @OneToOne(mappedBy = "device")
+    @OneToOne(mappedBy = "device", fetch = FetchType.LAZY)
     private Agent agent;
 }
