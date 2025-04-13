@@ -17,7 +17,7 @@ public class Agent {
     @Column(name = "agent_name", nullable = false)
     private String agentName;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "device_id", unique = true)
     private Device device;
 }
