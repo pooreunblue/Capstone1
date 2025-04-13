@@ -10,5 +10,5 @@ public class AgentSignalRequest {
     private Long deviceId;
     private Long statusId;
     private String timeStamp;
-
+    private int streamingFrequency;
 }
