@@ -1,10 +1,6 @@
 package org.vox.capstonedesign1.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
+import jakarta.persistence.*;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -21,4 +17,10 @@ public class Device {
 
     @Column(name = "device_name", nullable = false)
     private String deviceName;
+
+    @Column(name = "frequency", nullable = true)
+    private String frequency;
+
+    @OneToOne(mappedBy = "device")
+    private Agent agent;
 }
