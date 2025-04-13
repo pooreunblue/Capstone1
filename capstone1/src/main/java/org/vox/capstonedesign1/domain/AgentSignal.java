@@ -31,10 +31,14 @@ public class AgentSignal {
     @Column(name = "time_stamp", nullable = false)
     private LocalDateTime timeStamp;
 
+    @Column(name = "streaming_frequency")
+    private int streamingFrequency;
+
     @Builder
-    public AgentSignal(Device device, EstimatedStatus estimatedStatus, LocalDateTime timeStamp) {
+    public AgentSignal(Device device, EstimatedStatus estimatedStatus, LocalDateTime timeStamp, int streamingFrequency) {
         this.device = device;
         this.estimatedStatus = estimatedStatus;
         this.timeStamp = timeStamp;
+        this.streamingFrequency = streamingFrequency;
     }
 }
