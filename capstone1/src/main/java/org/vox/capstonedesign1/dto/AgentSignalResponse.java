@@ -2,15 +2,19 @@ package org.vox.capstonedesign1.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+
 import java.time.LocalDateTime;
 
-@Data
 @AllArgsConstructor
 @Builder
+@Getter
 public class AgentSignalResponse {
-    private Long deviceId;
-    private String deviceName;
+
+    private String agentName;
     private String estimatedStatus;
+    private String deviceName;
     private LocalDateTime timeStamp;
+    private int streamingFrequency;
+    private String serverIp;
 }
