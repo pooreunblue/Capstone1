@@ -10,7 +10,7 @@ import java.net.DatagramPacket;
 
 import static org.mockito.Mockito.*;
 
-class UdpReceiverIntegrationTest {
+class UdpReceiverTest {
 
     @Test
     void UDP소켓서비스전달테스트() throws Exception {
