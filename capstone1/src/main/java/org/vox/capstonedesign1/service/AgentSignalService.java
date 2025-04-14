@@ -6,7 +6,7 @@ import org.vox.capstonedesign1.domain.Agent;
 import org.vox.capstonedesign1.domain.AgentSignal;
 import org.vox.capstonedesign1.domain.Device;
 import org.vox.capstonedesign1.domain.EstimatedStatus;
-import org.vox.capstonedesign1.dto.AgentSignalRequest;
+import org.vox.capstonedesign1.dto.AddAgentSignalRequest;
 import org.vox.capstonedesign1.dto.AgentSignalResponse;
 import org.vox.capstonedesign1.repository.AgentRepository;
 import org.vox.capstonedesign1.repository.AgentSignalRepository;
@@ -17,7 +17,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,7 +28,7 @@ public class AgentSignalService {
     private final DeviceRepository deviceRepository;
     private final EstimatedStatusRepository estimatedStatusRepository;
 
-    public void saveSignal(AgentSignalRequest request) {
+    public void saveSignal(AddAgentSignalRequest request) {
         Device device = fetchDeviceById(request);
         EstimatedStatus estimatedStatus = fetchStatusById(request);
         LocalDateTime timeStamp = LocalDateTime.parse(request.getTimeStamp(), DateTimeFormatter.ISO_DATE_TIME);
@@ -66,12 +65,12 @@ public class AgentSignalService {
                 .collect(Collectors.toList());
     }
 
-    private Device fetchDeviceById(AgentSignalRequest request) {
+    private Device fetchDeviceById(AddAgentSignalRequest request) {
         return deviceRepository.findById(request.getDeviceId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 디바이스 ID"));
     }
 
-    private EstimatedStatus fetchStatusById(AgentSignalRequest request) {
+    private EstimatedStatus fetchStatusById(AddAgentSignalRequest request) {
         return estimatedStatusRepository.findById(request.getStatusId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상황 ID"));
     }
