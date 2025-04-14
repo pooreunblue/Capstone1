@@ -17,6 +17,10 @@ public class Agent {
     @Column(name = "agent_name", nullable = false)
     private String agentName;
 
+    @ManyToOne
+    @JoinColumn(name = "squad_id")
+    private Squad squad;
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "device_id", unique = true)
     private Device device;
