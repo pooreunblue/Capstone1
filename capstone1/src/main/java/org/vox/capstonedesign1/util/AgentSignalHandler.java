@@ -3,7 +3,7 @@ package org.vox.capstonedesign1.util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.vox.capstonedesign1.dto.AddAgentSignalRequest;
+import org.vox.capstonedesign1.dto.SaveAgentSignalRequest;
 import org.vox.capstonedesign1.service.AgentSignalService;
 
 @Component
@@ -15,7 +15,7 @@ public class AgentSignalHandler implements UdpMessageHandler {
 
     @Override
     public void handleMessage(String message) throws Exception {
-        AddAgentSignalRequest dto = objectMapper.readValue(message, AddAgentSignalRequest.class);
+        SaveAgentSignalRequest dto = objectMapper.readValue(message, SaveAgentSignalRequest.class);
         agentSignalService.saveSignal(dto);
     }
 }

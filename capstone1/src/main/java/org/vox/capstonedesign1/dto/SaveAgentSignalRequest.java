@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class AddAgentSignalRequest {
+public class SaveAgentSignalRequest {
 
     private Long deviceId;
     private Long statusId;

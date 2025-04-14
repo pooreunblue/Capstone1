@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Getter
-public class AgentSignalResponse {
+public class AgentViewResponse {
 
     private String agentName;
     private String estimatedStatus;

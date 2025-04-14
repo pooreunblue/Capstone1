@@ -6,8 +6,8 @@ import org.vox.capstonedesign1.domain.Agent;
 import org.vox.capstonedesign1.domain.AgentSignal;
 import org.vox.capstonedesign1.domain.Device;
 import org.vox.capstonedesign1.domain.EstimatedStatus;
-import org.vox.capstonedesign1.dto.AddAgentSignalRequest;
-import org.vox.capstonedesign1.dto.AgentSignalResponse;
+import org.vox.capstonedesign1.dto.SaveAgentSignalRequest;
+import org.vox.capstonedesign1.dto.AgentViewResponse;
 import org.vox.capstonedesign1.repository.AgentRepository;
 import org.vox.capstonedesign1.repository.AgentSignalRepository;
 import org.vox.capstonedesign1.repository.DeviceRepository;
@@ -28,7 +28,7 @@ public class AgentSignalService {
     private final DeviceRepository deviceRepository;
     private final EstimatedStatusRepository estimatedStatusRepository;
 
-    public void saveSignal(AddAgentSignalRequest request) {
+    public void saveSignal(SaveAgentSignalRequest request) {
         Device device = fetchDeviceById(request);
         EstimatedStatus estimatedStatus = fetchStatusById(request);
         LocalDateTime timeStamp = LocalDateTime.parse(request.getTimeStamp(), DateTimeFormatter.ISO_DATE_TIME);
@@ -40,14 +40,14 @@ public class AgentSignalService {
         agentSignalRepository.save(agentSignal);
     }
 
-    public AgentSignalResponse getLatestSignalByDeviceId(Long deviceId) {
+    public AgentViewResponse getLatestSignalByDeviceId(Long deviceId) {
         AgentSignal latestSignal = agentSignalRepository
                 .findTopByDevice_DeviceIdOrderByTimeStampDesc(deviceId)
                 .orElseThrow(() -> new IllegalArgumentException("deviceId" + deviceId + "의 데이터가 없습니다."));
         Agent agent = agentRepository
                 .findByDevice_DeviceId(deviceId)
                 .orElseThrow(() -> new IllegalArgumentException("deviceID" + deviceId + "에 연결된 agent가 없습니다."));
-        return AgentSignalResponse.builder()
+        return AgentViewResponse.builder()
                 .agentName(agent.getAgentName())
                 .estimatedStatus(latestSignal.getEstimatedStatus().getStatusInformation())
                 .deviceName(latestSignal.getDevice().getDeviceName())
@@ -58,19 +58,19 @@ public class AgentSignalService {
     }
 
     // 여러 명의 최신 상태 조회 (ex: 최대 6명)
-    public List<AgentSignalResponse> getLatestSignalsForDevices(List<Long> deviceIds) {
+    public List<AgentViewResponse> getLatestSignalsForDevices(List<Long> deviceIds) {
         return deviceIds.stream()
                 .map(this::getLatestSignalByDeviceId)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
 
-    private Device fetchDeviceById(AddAgentSignalRequest request) {
+    private Device fetchDeviceById(SaveAgentSignalRequest request) {
         return deviceRepository.findById(request.getDeviceId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 디바이스 ID"));
     }
 
-    private EstimatedStatus fetchStatusById(AddAgentSignalRequest request) {
+    private EstimatedStatus fetchStatusById(SaveAgentSignalRequest request) {
         return estimatedStatusRepository.findById(request.getStatusId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상황 ID"));
     }
