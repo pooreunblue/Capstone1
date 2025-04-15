@@ -17,7 +17,4 @@ public class Device {
 
     @Column(name = "device_name", nullable = false)
     private String deviceName;
-
-    @OneToOne(mappedBy = "device", fetch = FetchType.LAZY)
-    private Agent agent;
 }
