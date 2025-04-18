@@ -14,11 +14,8 @@ public class Squad {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long squadId;
 
     @Column(nullable = false, name = "squad_name")
     private String squadName;
-
-    @OneToMany(mappedBy = "squad")
-    private List<Agent> agents;
 }
