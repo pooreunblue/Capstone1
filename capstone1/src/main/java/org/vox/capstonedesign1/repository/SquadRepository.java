@@ -7,6 +7,4 @@ import org.vox.capstonedesign1.domain.Squad;
 import java.util.List;
 
 public interface SquadRepository extends JpaRepository<Squad, Long> {
-    @Query("SELECT s FROM Squad s JOIN FETCH s.agents")
-    List<Squad> findAllWithAgents();
 }
