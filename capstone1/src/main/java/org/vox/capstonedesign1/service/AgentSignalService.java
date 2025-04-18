@@ -41,11 +41,9 @@ public class AgentSignalService {
     }
 
     public AgentViewResponse getLatestSignalByDeviceId(Long deviceId) {
-        AgentSignal latestSignal = agentSignalRepository
-                .findTopByDevice_DeviceIdOrderByTimeStampDesc(deviceId)
+        AgentSignal latestSignal = agentSignalRepository.findTopByDevice_DeviceIdOrderByTimeStampDesc(deviceId)
                 .orElseThrow(() -> new IllegalArgumentException("deviceId" + deviceId + "의 데이터가 없습니다."));
-        Agent agent = agentRepository
-                .findByDevice_DeviceId(deviceId)
+        Agent agent = agentRepository.findByDevice_DeviceId(deviceId)
                 .orElseThrow(() -> new IllegalArgumentException("deviceID" + deviceId + "에 연결된 agent가 없습니다."));
         return AgentViewResponse.builder()
                 .agentName(agent.getAgentName())
