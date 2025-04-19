@@ -4,7 +4,6 @@ import lombok.Builder;
 import lombok.Getter;
 import org.vox.capstonedesign1.domain.Squad;
 
-@Builder
 @Getter
 public class SquadListViewResponse {
 
