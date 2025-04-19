@@ -4,7 +4,7 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.vox.capstonedesign1.util.UdpMessageHandler;
+import org.vox.capstonedesign1.util.handler.UdpMessageHandler;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -32,12 +32,9 @@ public class UdpReceiver {
             try {
                 DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
                 datagramSocket.receive(packet);
-
                 String message = new String(packet.getData(), 0, packet.getLength(), "UTF-8");
                 log.info("수신된 UDP 데이터: {}", message);
-
                 messageHandler.handleMessage(message);
-
             } catch (Exception e) {
                 log.error("UDP 수신 중 오류 발생", e);
             }

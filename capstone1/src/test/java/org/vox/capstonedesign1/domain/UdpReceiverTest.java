@@ -2,7 +2,7 @@ package org.vox.capstonedesign1.domain;
 
 import org.junit.jupiter.api.Test;
 import org.vox.capstonedesign1.testutil.MockDatagramSocket;
-import org.vox.capstonedesign1.util.UdpMessageHandler;
+import org.vox.capstonedesign1.util.handler.UdpMessageHandler;
 
 import java.net.DatagramPacket;
 

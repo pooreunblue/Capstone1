@@ -1,4 +1,4 @@
-package org.vox.capstonedesign1.util;
+package org.vox.capstonedesign1.util.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
