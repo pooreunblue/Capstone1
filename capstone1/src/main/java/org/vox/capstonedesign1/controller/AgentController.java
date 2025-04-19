@@ -12,7 +12,6 @@ import org.vox.capstonedesign1.repository.AgentRepository;
 import org.vox.capstonedesign1.service.AgentSignalService;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -38,12 +37,12 @@ public class AgentController {
     }
 
     /**
-     * [GET] /main/squads/{squadId}_agents/agent/{agentId}
+     * [GET] /main/squads/{squadId}/agent/{agentId}
      * 특정 요원의 최신 상태 조회
      */
-    @GetMapping("/{squadId}/agent/{agentId}")
+    @GetMapping("/{squadId}/agents/{agentId}")
     public ResponseEntity<AgentViewResponse> getAgentStatus(@PathVariable Long squadId,@PathVariable Long agentId) {
-        Agent agent = agentRepository.findByAgentIdAndSquad_SquadId(squadId, agentId)
+        Agent agent = agentRepository.findBySquad_SquadIdAndAgentId(squadId, agentId)
                 .orElseThrow(() -> new IllegalArgumentException("소대" + squadId + "에 요원" + agentId + "가 존재하지 않습니다."));
         Long deviceId = agent.getDevice().getDeviceId();
         AgentViewResponse response= agentSignalService.getLatestSignalByDeviceId(deviceId);
