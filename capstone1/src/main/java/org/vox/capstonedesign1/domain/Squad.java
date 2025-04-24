@@ -2,10 +2,9 @@ package org.vox.capstonedesign1.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @Entity
 @Getter
@@ -18,4 +17,9 @@ public class Squad {
 
     @Column(nullable = false, name = "squad_name")
     private String squadName;
+
+    @Builder
+    public Squad(String squadName) {
+        this.squadName = squadName;
+    }
 }
