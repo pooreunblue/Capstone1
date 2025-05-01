@@ -13,7 +13,7 @@ public class AgentViewResponse {
 
     private String agentName;
     private String estimatedStatus;
-    private String deviceName;
+    private String deviceIdWord;
     private LocalDateTime timeStamp;
     private int streamingFrequency;
     private String serverIp;
