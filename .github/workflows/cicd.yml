@@ -34,7 +34,7 @@ jobs:
           utcOffset: "+09:00"
 
       - name: Set artifact
-        run: echo "artifact=$(ls ./capstone1/build/libs)" >> $GITHUB_ENV
+        run: echo "artifact=$(ls ./build/libs)" >> $GITHUB_ENV
 
       - name: Beanstalk Deploy
         uses: einaregilsson/beanstalk-deploy@v20
@@ -45,4 +45,4 @@ jobs:
           environment_name: Vox-korea-env
           version_label: github-action-${{steps.current-time.outputs.formattedTime}}
           region: ap-northeast-2
-          deployment_package: ./build/libs/capstone1-1.0.jar
+          deployment_package: ./capstone1/build/libs/capstone1-1.0.jar
