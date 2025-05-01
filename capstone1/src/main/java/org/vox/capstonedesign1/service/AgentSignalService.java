@@ -40,15 +40,15 @@ public class AgentSignalService {
         agentSignalRepository.save(agentSignal);
     }
 
-    public AgentViewResponse getLatestSignalByDeviceId(Long deviceId) {
-        AgentSignal latestSignal = agentSignalRepository.findTopByDevice_DeviceIdOrderByTimeStampDesc(deviceId)
-                .orElseThrow(() -> new IllegalArgumentException("deviceId" + deviceId + "의 데이터가 없습니다."));
-        Agent agent = agentRepository.findByDevice_DeviceId(deviceId)
-                .orElseThrow(() -> new IllegalArgumentException("deviceID" + deviceId + "에 연결된 agent가 없습니다."));
+    public AgentViewResponse getLatestSignalByDeviceIdWord(String deviceIdWord) {
+        AgentSignal latestSignal = agentSignalRepository.findTopByDevice_DeviceIdWordOrderByTimeStampDesc(deviceIdWord)
+                .orElseThrow(() -> new IllegalArgumentException("deviceIdWord" + deviceIdWord + "의 데이터가 없습니다."));
+        Agent agent = agentRepository.findByDevice_DeviceIdWord(deviceIdWord)
+                .orElseThrow(() -> new IllegalArgumentException("deviceIDWord" + deviceIdWord + "에 연결된 agent가 없습니다."));
         return AgentViewResponse.builder()
                 .agentName(agent.getAgentName())
                 .estimatedStatus(latestSignal.getEstimatedStatus().getStatusInformation())
-                .deviceName(latestSignal.getDevice().getDeviceName())
+                .deviceIdWord(latestSignal.getDevice().getDeviceIdWord())
                 .timeStamp(latestSignal.getTimeStamp())
                 .streamingFrequency(latestSignal.getStreamingFrequency())
                 .serverIp("192.168.0.0")
@@ -56,15 +56,15 @@ public class AgentSignalService {
     }
 
     // 여러 명의 최신 상태 조회 (ex: 최대 6명)
-    public List<AgentViewResponse> getLatestSignalsForDevices(List<Long> deviceIds) {
+    public List<AgentViewResponse> getLatestSignalsForDevices(List<String> deviceIds) {
         return deviceIds.stream()
-                .map(this::getLatestSignalByDeviceId)
+                .map(this::getLatestSignalByDeviceIdWord)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
 
     private Device fetchDeviceById(SaveAgentSignalRequest request) {
-        return deviceRepository.findById(request.getDeviceId())
+        return deviceRepository.findByDeviceIdWord(request.getDeviceIdWord())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 디바이스 ID"));
     }
 
