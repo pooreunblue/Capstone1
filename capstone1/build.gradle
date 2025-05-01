@@ -23,6 +23,10 @@ dependencies {
     testImplementation 'com.h2database:h2'
 }
 
+jar {
+    enabled = false
+}
+
 test {
     useJUnitPlatform()
 }
