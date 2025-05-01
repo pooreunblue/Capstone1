@@ -18,6 +18,6 @@ public class Device {
     @Column(name = "device_name")
     private String deviceName;
 
-    @Column(name = "device_id", nullable = false)
+    @Column(name = "device_id_word", nullable = false, unique = true)
     private String deviceIdWord;
 }
