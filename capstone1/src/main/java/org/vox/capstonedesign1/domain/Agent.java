@@ -22,6 +22,6 @@ public class Agent {
     private Squad squad;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "device_id", unique = true)
+    @JoinColumn(name = "device_id_word", referencedColumnName = "device_id_word", nullable = false)
     private Device device;
 }

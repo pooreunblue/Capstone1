@@ -21,7 +21,7 @@ public class AgentSignal {
     private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "device_id", nullable = false)
+    @JoinColumn(name = "device_id_word", referencedColumnName = "device_id_word", nullable = false)
     private Device device;
 
     @ManyToOne(fetch = FetchType.EAGER)
