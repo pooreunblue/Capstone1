@@ -29,7 +29,7 @@ public class AgentSignalService {
     private final EstimatedStatusRepository estimatedStatusRepository;
 
     public void saveSignal(SaveAgentSignalRequest request) {
-        Device device = fetchDeviceById(request);
+        Device device = fetchDeviceBySerialNumber(request);
         EstimatedStatus estimatedStatus = fetchStatusById(request);
         LocalDateTime timeStamp = LocalDateTime.parse(request.getTimeStamp(), DateTimeFormatter.ISO_DATE_TIME);
         AgentSignal agentSignal = AgentSignal.builder()
@@ -40,15 +40,15 @@ public class AgentSignalService {
         agentSignalRepository.save(agentSignal);
     }
 
-    public AgentViewResponse getLatestSignalByDeviceIdWord(String deviceIdWord) {
-        AgentSignal latestSignal = agentSignalRepository.findTopByDevice_DeviceIdWordOrderByTimeStampDesc(deviceIdWord)
-                .orElseThrow(() -> new IllegalArgumentException("deviceIdWord" + deviceIdWord + "의 데이터가 없습니다."));
-        Agent agent = agentRepository.findByDevice_DeviceIdWord(deviceIdWord)
-                .orElseThrow(() -> new IllegalArgumentException("deviceIDWord" + deviceIdWord + "에 연결된 agent가 없습니다."));
+    public AgentViewResponse getLatestSignalByDeviceSerialNumber(String deviceSerialNumber) {
+        AgentSignal latestSignal = agentSignalRepository.findTopByDevice_DeviceSerialNumberOrderByTimeStampDesc(deviceSerialNumber)
+                .orElseThrow(() -> new IllegalArgumentException("deviceIdWord" + deviceSerialNumber + "의 데이터가 없습니다."));
+        Agent agent = agentRepository.findByDevice_DeviceSerialNumber(deviceSerialNumber)
+                .orElseThrow(() -> new IllegalArgumentException("deviceIDWord" + deviceSerialNumber + "에 연결된 agent가 없습니다."));
         return AgentViewResponse.builder()
                 .agentName(agent.getAgentName())
                 .estimatedStatus(latestSignal.getEstimatedStatus().getStatusInformation())
-                .deviceIdWord(latestSignal.getDevice().getDeviceIdWord())
+                .deviceSerialNumber(latestSignal.getDevice().getDeviceSerialNumber())
                 .timeStamp(latestSignal.getTimeStamp())
                 .streamingFrequency(latestSignal.getStreamingFrequency())
                 .serverIp("192.168.0.0")
@@ -58,14 +58,14 @@ public class AgentSignalService {
     // 여러 명의 최신 상태 조회 (ex: 최대 6명)
     public List<AgentViewResponse> getLatestSignalsForDevices(List<String> deviceIds) {
         return deviceIds.stream()
-                .map(this::getLatestSignalByDeviceIdWord)
+                .map(this::getLatestSignalByDeviceSerialNumber)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
 
-    private Device fetchDeviceById(SaveAgentSignalRequest request) {
-        return deviceRepository.findByDeviceIdWord(request.getDeviceIdWord())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 디바이스 ID"));
+    private Device fetchDeviceBySerialNumber(SaveAgentSignalRequest request) {
+        return deviceRepository.findByDeviceSerialNumber(request.getDeviceSerialNumber())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 디바이스 일련번호"));
     }
 
     private EstimatedStatus fetchStatusById(SaveAgentSignalRequest request) {

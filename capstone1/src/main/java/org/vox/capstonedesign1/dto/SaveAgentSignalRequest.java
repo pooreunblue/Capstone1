@@ -8,14 +8,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SaveAgentSignalRequest {
 
-    private String deviceIdWord;
+    private String deviceSerialNumber;
     private Long statusId;
     private String timeStamp;
     private int streamingFrequency;
 
     @Builder
-    public SaveAgentSignalRequest(String deviceIdWord, Long statusId, String timeStamp, int streamingFrequency) {
-        this.deviceIdWord = deviceIdWord;
+    public SaveAgentSignalRequest(String deviceSerialNumber, Long statusId, String timeStamp, int streamingFrequency) {
+        this.deviceSerialNumber = deviceSerialNumber;
         this.statusId = statusId;
         this.timeStamp = timeStamp;
         this.streamingFrequency = streamingFrequency;

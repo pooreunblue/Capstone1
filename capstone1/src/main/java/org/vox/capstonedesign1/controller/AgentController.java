@@ -29,10 +29,10 @@ public class AgentController {
     @GetMapping("/{squadId}")
     public ResponseEntity<List<AgentViewResponse>> getAllAgentsInSquad(@PathVariable Long squadId) {
         List<Agent> agents = agentRepository.findBySquad_SquadIdOrderByAgentIdAsc(squadId);
-        List<String> deviceIds = agents.stream()
-                .map(agent -> agent.getDevice().getDeviceIdWord())
+        List<String> deviceSerialNumbers = agents.stream()
+                .map(agent -> agent.getDevice().getDeviceSerialNumber())
                 .collect(Collectors.toList());
-        List<AgentViewResponse> agentStatuses = agentSignalService.getLatestSignalsForDevices(deviceIds);
+        List<AgentViewResponse> agentStatuses = agentSignalService.getLatestSignalsForDevices(deviceSerialNumbers);
         return ResponseEntity.ok(agentStatuses);
     }
 
@@ -44,8 +44,8 @@ public class AgentController {
     public ResponseEntity<AgentViewResponse> getAgentStatus(@PathVariable Long squadId,@PathVariable Long agentId) {
         Agent agent = agentRepository.findBySquad_SquadIdAndAgentId(squadId, agentId)
                 .orElseThrow(() -> new IllegalArgumentException("소대" + squadId + "에 요원" + agentId + "가 존재하지 않습니다."));
-        String deviceIdWord = agent.getDevice().getDeviceIdWord();
-        AgentViewResponse response= agentSignalService.getLatestSignalByDeviceIdWord(deviceIdWord);
+        String deviceSerialNumber = agent.getDevice().getDeviceSerialNumber();
+        AgentViewResponse response= agentSignalService.getLatestSignalByDeviceSerialNumber(deviceSerialNumber);
         return ResponseEntity.ok(response);
     }
 }
