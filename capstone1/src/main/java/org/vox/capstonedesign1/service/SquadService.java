@@ -13,7 +13,7 @@ public class SquadService {
 
     private final SquadRepository squadRepository;
 
-    public Squad findById(long squadId) {
+    public Squad findById(Long squadId) {
         return squadRepository.findById(squadId).orElse(null);
     }
 
