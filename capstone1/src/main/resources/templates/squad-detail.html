@@ -1,104 +1,116 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>소대 요원 상태</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${squadName} + ' 현황'">소대 현황</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
-
     <style>
         body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Noto Sans KR', sans-serif;
+            font-family: 'Arial', sans-serif;
+            margin: 0; padding: 0;
             background-color: #ffffff;
             color: #000000;
         }
-
-        .header {
-            padding: 20px;
-        }
-
+        /* 로고 */
         .voxlogo {
             height: 90px;
             margin: 20px;
         }
-
-        .main-container {
-            text-align: center;
-            margin-top: 50px;
-        }
-
-        .main-title {
-            font-size: 26px;
+        header {
+            padding: 1rem;
+            font-size: 24px;
             font-weight: bold;
-            margin-bottom: 40px;
         }
-
-        .agent-list {
+        .container {
             display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 30px;
+            flex-direction: row;
+            padding: 1rem;
         }
-
-        .agent-card {
-            width: 280px;
-            background-color: #f0f0f0;
-            padding: 25px 20px;
-            border-radius: 15px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            width: 75%;
         }
-
-        .agent-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        .card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 1rem;
+            height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
-
-        .agent-card h2 {
-            margin: 10px 0;
-            font-size: 20px;
-        }
-
-        .agent-card p {
-            margin: 5px 0;
-            font-size: 14px;
-        }
-
-        .card-content h2 {
-            margin: 0;
-            font-size: 18px;
+        .status {
+            font-size: 1.2rem;
             font-weight: bold;
+        }
+        .status.STABLE { color: green; }
+        .status.SOS { color: red; }
+        .status.NEED_BACKUO { color: yellow; }
+        .device-name {
+            font-weight: bold;
+            margin-top: 0.5rem;
+        }
+        iframe {
+            width: 100%;
+            height: 200px;
+            border: none;
+        }
+        .log-panel {
+            width: 20%;
+            padding-left: 1rem;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            font-family: monospace;
+            background-color: #ffffff;
+            border-radius: 10px;
+            height: 100%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
     </style>
 </head>
 <body>
-
+<!-- 로고 링크 -->
 <div class="header">
-    <a href="/main">
+    <a href="/main" class="logo-container">
         <img src="https://i.ibb.co/YBDLXjzs/vox.jpg" alt="voxlogo" class="voxlogo">
     </a>
 </div>
-
-<div class="main-container">
-    <h1 class="main-title">소대 요원 상태</h1>
-    <div class="agent-list">
-        <div th:each="agentStatus : ${agentStatuses}">
-            <a th:href="@{|/${agentStatus.deviceSerialNumber}|}" class="agent-card">
-                <div class="card-content">
-                    <h2 th:text="${agentStatus.agentName}">요원이름</h2>
-                    <p><strong>상태:</strong> <span th:text="${agentStatus.estimatedStatus}">수신호</span></p>
-                    <p><strong>디바이스 번호:</strong> <span th:text="${agentStatus.deviceSerialNumber}">00000</span></p>
-                    <p><strong>타임스탬프:</strong> <span th:text="${#dates.format(agentStatus.timeStamp, 'yyyy-MM-dd HH:mm:ss')}">시간</span></p>
-                    <p><strong>주기:</strong> <span th:text="${agentStatus.streamingFrequency} + 'Hz'">100Hz</span></p>
-                    <p><strong>서버 IP:</strong> <span th:text="${agentStatus.serverIp}">192.168.0.0</span></p>
-                    <!-- Unity WebGL iframe - 고유 deviceSerialNumber 또는 agentName 기반 -->
-                    <iframe th:src="@{'/unity-view/' + ${agentStatus.deviceSerialNumber}}"></iframe>
+<header>
+    <div style="text-align: center;">[[${squadName}]] 현황</div>
+</header>
+<div class="container">
+    <div class="cards">
+        <div class="card" th:each="agent : ${agentStatuses}">
+            <div>
+                <div th:text="'Agent ' + ${agent.agentName}">요원</div>
+                <div class="status"
+                     th:text="${agent.estimatedStatus}"
+                     th:classappend="' ' + ${agent.estimatedStatus.toUpperCase().replace(' ', '_')}">상태
                 </div>
-            </a>
+            </div>
+            <iframe th:src="'/unity-view/' + ${agent.deviceSerialNumber}"></iframe>
+            <div class="device-name" th:text="${agent.deviceSerialNumber}">Samsung s10</div>
+        </div>
+    </div>
+    <div class="log-panel">
+        <div>
+            <h4>서버 정보</h4>
+            <div th:each="agent : ${agentStatuses}">
+                <span th:text="'Agent ' + ${agent.agentName} + ': ' + ${agent.streamingFrequency} + 'Hz'"></span><br/>
+            </div>
+        </div>
+        <hr/>
+        <div>
+            <h4>로그</h4>
+            <div th:each="agent : ${agentStatuses}">
+                <span th:text="'[' + ${#temporals.format(agent.timeStamp, 'a h:mm:ss', 'ko')} + '] Agent ' + ${agent.agentName} + ': ' + ${agent.estimatedStatus}"></span><br/>
+            </div>
         </div>
     </div>
 </div>
-
 </body>
 </html>
