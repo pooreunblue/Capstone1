@@ -1,11 +1,9 @@
 package org.vox.capstonedesign1.dto;
 
-import lombok.Builder;
 import lombok.Getter;
 import org.vox.capstonedesign1.domain.Squad;
 
 @Getter
-@Builder
 public class SquadViewResponse {
 
     private final Long squadId;

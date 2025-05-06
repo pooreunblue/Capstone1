@@ -16,9 +16,7 @@ public class SquadService {
 
     public SquadViewResponse findById(Long squadId) {
         Squad squad = squadRepository.findById(squadId).orElse(null);
-        return SquadViewResponse.builder()
-                .squadName(squad.getSquadName())
-                .build();
+        return new SquadViewResponse(squad);
     }
 
     public List<Squad> findAll() {
