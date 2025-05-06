@@ -8,10 +8,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.vox.capstonedesign1.domain.Agent;
-import org.vox.capstonedesign1.domain.Squad;
 import org.vox.capstonedesign1.dto.AgentViewResponse;
+import org.vox.capstonedesign1.dto.SquadViewResponse;
 import org.vox.capstonedesign1.repository.AgentRepository;
-import org.vox.capstonedesign1.repository.SquadRepository;
 import org.vox.capstonedesign1.service.AgentSignalService;
 import org.vox.capstonedesign1.service.SquadService;
 
@@ -32,7 +31,7 @@ public class AgentViewController {
      */
     @GetMapping("/{squadId}")
     public String getAllAgentsInSquad(@PathVariable Long squadId, Model model) {
-        Squad squad = squadService.findById(squadId);
+        SquadViewResponse squad = squadService.findById(squadId);
         List<String> deviceSerialNumbers = agentSignalService.getDeviceSerialNumbers(squadId);
         List<AgentViewResponse> agentStatuses = agentSignalService.getLatestSignalsForDevices(deviceSerialNumbers);
         model.addAttribute("squad", squad);

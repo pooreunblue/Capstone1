@@ -3,6 +3,7 @@ package org.vox.capstonedesign1.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.vox.capstonedesign1.domain.Squad;
+import org.vox.capstonedesign1.dto.SquadViewResponse;
 import org.vox.capstonedesign1.repository.SquadRepository;
 
 import java.util.List;
@@ -13,8 +14,11 @@ public class SquadService {
 
     private final SquadRepository squadRepository;
 
-    public Squad findById(Long squadId) {
-        return squadRepository.findById(squadId).orElse(null);
+    public SquadViewResponse findById(Long squadId) {
+        Squad squad = squadRepository.findById(squadId).orElse(null);
+        return SquadViewResponse.builder()
+                .squadName(squad.getSquadName())
+                .build();
     }
 
     public List<Squad> findAll() {
