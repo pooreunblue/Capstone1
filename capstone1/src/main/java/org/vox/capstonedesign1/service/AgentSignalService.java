@@ -49,9 +49,9 @@ public class AgentSignalService {
 
     public AgentViewResponse getLatestSignalByDeviceSerialNumber(String deviceSerialNumber) {
         AgentSignal latestSignal = agentSignalRepository.findTopByDevice_DeviceSerialNumberOrderByTimeStampDesc(deviceSerialNumber)
-                .orElseThrow(() -> new IllegalArgumentException("deviceIdWord" + deviceSerialNumber + "의 데이터가 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("deviceSerialNumber" + deviceSerialNumber + "의 데이터가 없습니다."));
         Agent agent = agentRepository.findByDevice_DeviceSerialNumber(deviceSerialNumber)
-                .orElseThrow(() -> new IllegalArgumentException("deviceIDWord" + deviceSerialNumber + "에 연결된 agent가 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("deviceSerialNumber" + deviceSerialNumber + "에 연결된 agent가 없습니다."));
         return AgentViewResponse.builder()
                 .agentName(agent.getAgentName())
                 .estimatedStatus(latestSignal.getEstimatedStatus().getStatusInformation())
