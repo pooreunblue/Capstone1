@@ -22,7 +22,6 @@ import java.util.List;
 @RequestMapping("/main/squads")
 public class AgentViewController {
 
-    private final SquadRepository squadRepository;
     private final AgentSignalService agentSignalService;
     private final AgentRepository agentRepository;
     private final SquadService squadService;
@@ -36,7 +35,7 @@ public class AgentViewController {
         Squad squad = squadService.findById(squadId);
         List<String> deviceSerialNumbers = agentSignalService.getDeviceSerialNumbers(squadId);
         List<AgentViewResponse> agentStatuses = agentSignalService.getLatestSignalsForDevices(deviceSerialNumbers);
-        model.addAttribute("squadName", squad);
+        model.addAttribute("squad", squad);
         model.addAttribute("agentStatuses", agentStatuses);
         return "squad-detail";
     }
