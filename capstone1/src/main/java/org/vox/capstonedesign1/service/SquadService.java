@@ -13,6 +13,10 @@ public class SquadService {
 
     private final SquadRepository squadRepository;
 
+    public Squad findById(long squadId) {
+        return squadRepository.findById(squadId).orElse(null);
+    }
+
     public List<Squad> findAll() {
         return squadRepository.findAll();
     }
