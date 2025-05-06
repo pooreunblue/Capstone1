@@ -5,7 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.vox.capstonedesign1.dto.SquadListViewResponse;
+import org.vox.capstonedesign1.dto.SquadViewResponse;
 import org.vox.capstonedesign1.service.SquadService;
 
 import java.util.List;
@@ -23,9 +23,9 @@ public class SquadViewController {
      */
     @GetMapping
     public String findAllSquads(Model model) {
-        List<SquadListViewResponse> squads = squadService.findAll()
+        List<SquadViewResponse> squads = squadService.findAll()
                 .stream()
-                .map(SquadListViewResponse::new)
+                .map(SquadViewResponse::new)
                 .toList();
         model.addAttribute("squads", squads);
         return "squadList";
