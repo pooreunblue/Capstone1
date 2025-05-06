@@ -6,15 +6,14 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 
-@AllArgsConstructor
 @Builder
 @Getter
 public class AgentViewResponse {
 
-    private String agentName;
-    private String estimatedStatus;
-    private String deviceSerialNumber;
-    private LocalDateTime timeStamp;
-    private int streamingFrequency;
-    private String serverIp;
+    private final String agentName;
+    private final String estimatedStatus;
+    private final String deviceSerialNumber;
+    private final LocalDateTime timeStamp;
+    private final int streamingFrequency;
+    private final String serverIp;
 }
