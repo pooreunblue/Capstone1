@@ -8,20 +8,24 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.vox.capstonedesign1.domain.Agent;
+import org.vox.capstonedesign1.domain.Squad;
 import org.vox.capstonedesign1.dto.AgentViewResponse;
 import org.vox.capstonedesign1.repository.AgentRepository;
+import org.vox.capstonedesign1.repository.SquadRepository;
 import org.vox.capstonedesign1.service.AgentSignalService;
+import org.vox.capstonedesign1.service.SquadService;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/main/squads")
 public class AgentViewController {
 
+    private final SquadRepository squadRepository;
     private final AgentSignalService agentSignalService;
     private final AgentRepository agentRepository;
+    private final SquadService squadService;
 
     /**
      * [GET] /main/squads/{squadId}
@@ -29,11 +33,10 @@ public class AgentViewController {
      */
     @GetMapping("/{squadId}")
     public String getAllAgentsInSquad(@PathVariable Long squadId, Model model) {
-        List<Agent> agents = agentRepository.findBySquad_SquadIdOrderByAgentIdAsc(squadId);
-        List<String> deviceSerialNumbers = agents.stream()
-                .map(agent -> agent.getDevice().getDeviceSerialNumber())
-                .collect(Collectors.toList());
+        Squad squad = squadService.findById(squadId);
+        List<String> deviceSerialNumbers = agentSignalService.getDeviceSerialNumbers(squadId);
         List<AgentViewResponse> agentStatuses = agentSignalService.getLatestSignalsForDevices(deviceSerialNumbers);
+        model.addAttribute("squadName", squad);
         model.addAttribute("agentStatuses", agentStatuses);
         return "squad-detail";
     }
