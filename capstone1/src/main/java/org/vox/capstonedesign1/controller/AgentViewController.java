@@ -3,6 +3,7 @@ package org.vox.capstonedesign1.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/main/squads")
-public class AgentController {
+public class AgentViewController {
 
     private final AgentSignalService agentSignalService;
     private final AgentRepository agentRepository;
@@ -27,13 +28,14 @@ public class AgentController {
      * 특정 소대의 요원 전체 상태 조회
      */
     @GetMapping("/{squadId}")
-    public ResponseEntity<List<AgentViewResponse>> getAllAgentsInSquad(@PathVariable Long squadId) {
+    public String getAllAgentsInSquad(@PathVariable Long squadId, Model model) {
         List<Agent> agents = agentRepository.findBySquad_SquadIdOrderByAgentIdAsc(squadId);
         List<String> deviceSerialNumbers = agents.stream()
                 .map(agent -> agent.getDevice().getDeviceSerialNumber())
                 .collect(Collectors.toList());
         List<AgentViewResponse> agentStatuses = agentSignalService.getLatestSignalsForDevices(deviceSerialNumbers);
-        return ResponseEntity.ok(agentStatuses);
+        model.addAttribute("agentStatuses", agentStatuses);
+        return "squad-detail";
     }
 
     /**
