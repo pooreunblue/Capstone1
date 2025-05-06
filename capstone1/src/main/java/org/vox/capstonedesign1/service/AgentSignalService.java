@@ -40,6 +40,13 @@ public class AgentSignalService {
         agentSignalRepository.save(agentSignal);
     }
 
+    public List<String> getDeviceSerialNumbers(Long squadId) {
+        List<Agent> agents = agentRepository.findBySquad_SquadIdOrderByAgentIdAsc(squadId);
+        return agents.stream()
+                .map(agent -> agent.getDevice().getDeviceSerialNumber())
+                .collect(Collectors.toList());
+    }
+
     public AgentViewResponse getLatestSignalByDeviceSerialNumber(String deviceSerialNumber) {
         AgentSignal latestSignal = agentSignalRepository.findTopByDevice_DeviceSerialNumberOrderByTimeStampDesc(deviceSerialNumber)
                 .orElseThrow(() -> new IllegalArgumentException("deviceIdWord" + deviceSerialNumber + "의 데이터가 없습니다."));
