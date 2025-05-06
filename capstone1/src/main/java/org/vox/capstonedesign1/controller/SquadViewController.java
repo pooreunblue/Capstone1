@@ -29,7 +29,6 @@ public class SquadViewController {
                 .map(SquadListViewResponse::new)
                 .toList();
         model.addAttribute("squads", squads);
-
         return "squadList";
     }
 }
