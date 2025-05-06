@@ -7,10 +7,11 @@
 
     <style>
         body {
-            font-family: 'Noto Sans KR', sans-serif;
-            background-color: #ffffff;
             margin: 0;
             padding: 0;
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #ffffff;
+            color: #000000;
         }
 
         .header {
@@ -18,12 +19,13 @@
         }
 
         .voxlogo {
-            height: 70px;
+            height: 90px;
+            margin: 20px;
         }
 
         .main-container {
             text-align: center;
-            margin: 40px;
+            margin-top: 50px;
         }
 
         .main-title {
@@ -62,6 +64,12 @@
             margin: 5px 0;
             font-size: 14px;
         }
+
+        .card-content h2 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -73,18 +81,21 @@
 </div>
 
 <div class="main-container">
-    <h1 class="main-title">소대 요원 상태 보기</h1>
-
+    <h1 class="main-title">소대 요원 상태</h1>
     <div class="agent-list">
-        <div class="agent-card" th:each="agentStatus : ${agentStatuses}">
-            <h2 th:text="${agentStatus.agentName}">요원이름</h2>
-            <p><strong>상태:</strong> <span th:text="${agentStatus.estimatedStatus}">수신호</span></p>
-            <p><strong>디바이스 번호:</strong> <span th:text="${agentStatus.deviceSerialNumber}">00000</span></p>
-            <p><strong>타임스탬프:</strong> <span th:text="${#dates.format(agentStatus.timeStamp, 'yyyy-MM-dd HH:mm:ss')}">시간</span></p>
-            <p><strong>주기:</strong> <span th:text="${agentStatus.streamingFrequency} + 'Hz'">100Hz</span></p>
-            <p><strong>서버 IP:</strong> <span th:text="${agentStatus.serverIp}">192.168.0.0</span></p>
-            <!-- Unity WebGL iframe - 고유 deviceSerialNumber 또는 agentName 기반 -->
-            <iframe th:src="@{'/unity-view/' + ${agentStatus.deviceSerialNumber}}"></iframe>
+        <div th:each="agentStatus : ${agentStatuses}">
+            <a th:href="@{|/${agentStatus.deviceSerialNumber}|}" class="agent-card">
+                <div class="card-content">
+                    <h2 th:text="${agentStatus.agentName}">요원이름</h2>
+                    <p><strong>상태:</strong> <span th:text="${agentStatus.estimatedStatus}">수신호</span></p>
+                    <p><strong>디바이스 번호:</strong> <span th:text="${agentStatus.deviceSerialNumber}">00000</span></p>
+                    <p><strong>타임스탬프:</strong> <span th:text="${#dates.format(agentStatus.timeStamp, 'yyyy-MM-dd HH:mm:ss')}">시간</span></p>
+                    <p><strong>주기:</strong> <span th:text="${agentStatus.streamingFrequency} + 'Hz'">100Hz</span></p>
+                    <p><strong>서버 IP:</strong> <span th:text="${agentStatus.serverIp}">192.168.0.0</span></p>
+                    <!-- Unity WebGL iframe - 고유 deviceSerialNumber 또는 agentName 기반 -->
+                    <iframe th:src="@{'/unity-view/' + ${agentStatus.deviceSerialNumber}}"></iframe>
+                </div>
+            </a>
         </div>
     </div>
 </div>
