@@ -52,14 +52,7 @@ public class AgentSignalService {
                 .orElseThrow(() -> new IllegalArgumentException("deviceSerialNumber" + deviceSerialNumber + "의 데이터가 없습니다."));
         Agent agent = agentRepository.findByDevice_DeviceSerialNumber(deviceSerialNumber)
                 .orElseThrow(() -> new IllegalArgumentException("deviceSerialNumber" + deviceSerialNumber + "에 연결된 agent가 없습니다."));
-        return AgentViewResponse.builder()
-                .agentName(agent.getAgentName())
-                .estimatedStatus(latestSignal.getEstimatedStatus().getStatusInformation())
-                .deviceSerialNumber(latestSignal.getDevice().getDeviceSerialNumber())
-                .timeStamp(latestSignal.getTimeStamp())
-                .streamingFrequency(latestSignal.getStreamingFrequency())
-                .serverIp("192.168.0.0")
-                .build();
+        return new AgentViewResponse(agent, latestSignal);
     }
 
     // 여러 명의 최신 상태 조회 (ex: 최대 6명)
