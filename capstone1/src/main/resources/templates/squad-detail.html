@@ -93,6 +93,8 @@
             border-radius: 5px;
             padding: 0.5rem;
             width: 100%;
+            min-height: 300px; /* 원하는 높이로 조절 */
+            overflow-y: auto;
         }
     </style>
 </head>
@@ -113,10 +115,10 @@
                 <div th:text="'Agent ' + ${agentStatus.agentName}">요원</div>
                 <div class="status"
                      th:text="${agentStatus.estimatedStatus}"
-                     th:classappend="' ' + ${agentStatus.estimatedStatus.toUpperCase().replace(' ', '_')}">상태
+                     th:classappend="${agentStatus.estimatedStatus != null} ? ' ' + ${agentStatus.estimatedStatus.toUpperCase().replace(' ', '_')} : ''">상태
                 </div>
             </div>
-            <iframe th:src="'/unity-view/' + ${agentStatus.deviceSerialNumber}"></iframe>
+<!--            <iframe th:src="'/unity-view/' + ${agentStatus.deviceSerialNumber}"></iframe>-->
             <div class="device-name" th:text="${agentStatus.deviceSerialNumber}">Samsung s10</div>
         </div>
     </div>
