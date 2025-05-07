@@ -63,8 +63,8 @@ public class AgentSignalService {
     }
 
     // 여러 명의 최신 상태 조회 (ex: 최대 6명)
-    public List<AgentViewResponse> getLatestSignalsForDevices(List<String> deviceIds) {
-        return deviceIds.stream()
+    public List<AgentViewResponse> getLatestSignalsForDevices(List<String> deviceSerialNumbers) {
+        return deviceSerialNumbers.stream()
                 .map(this::getLatestSignalByDeviceSerialNumber)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
