@@ -12,13 +12,13 @@ public class Agent {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long agentId;
+    private Long id;
 
     @Column(name = "agent_name", nullable = false)
     private String agentName;
 
     @ManyToOne
-    @JoinColumn(name = "squad_id")
+    @JoinColumn(name = "squad_id", nullable = false)
     private Squad squad;
 
     @OneToOne(fetch = FetchType.LAZY)
