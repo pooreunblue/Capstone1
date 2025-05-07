@@ -13,7 +13,7 @@ public class Squad {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long squadId;
+    private Long Id;
 
     @Column(nullable = false, name = "squad_name")
     private String squadName;

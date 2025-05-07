@@ -17,7 +17,7 @@ public class EstimatedStatus {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long statusId;
+    private Long id;
 
     @Column(name = "status_infomation", nullable = false)
     private String statusInformation;

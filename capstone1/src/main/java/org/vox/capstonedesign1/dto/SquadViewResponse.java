@@ -10,7 +10,7 @@ public class SquadViewResponse {
     private final String squadName;
 
     public SquadViewResponse(Squad squad) {
-        this.squadId = squad.getSquadId();
+        this.squadId = squad.getId();
         this.squadName = squad.getSquadName();
     }
 }

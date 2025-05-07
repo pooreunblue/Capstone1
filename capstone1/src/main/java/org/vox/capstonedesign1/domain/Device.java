@@ -13,7 +13,7 @@ public class Device {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long deviceId;
+    private Long id;
 
     @Column(name = "device_name")
     private String deviceName;

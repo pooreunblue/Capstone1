@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AgentRepository extends JpaRepository<Agent, Long> {
-    Optional<Agent> findBySquad_SquadIdAndAgentId(Long squadId, Long agentId);
+    Optional<Agent> findBySquad_IdAndId(Long squadId, Long agentId);
     Optional<Agent> findByDevice_DeviceSerialNumber(String deviceSerialNumber);
-    List<Agent> findBySquad_SquadIdOrderByAgentIdAsc(Long squadId);
+    List<Agent> findBySquad_IdOrderByIdAsc(Long squadId);
 }
