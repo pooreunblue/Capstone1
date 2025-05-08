@@ -1,5 +1,6 @@
 package org.vox.capstonedesign1.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.vox.capstonedesign1.domain.Squad;
@@ -14,7 +15,8 @@ public class SquadService {
     private final SquadRepository squadRepository;
 
     public Squad findById(Long squadId) {
-        return squadRepository.findById(squadId).orElse(null);
+        return squadRepository.findById(squadId)
+                .orElseThrow(() -> new EntityNotFoundException("Squad not found"));
     }
 
     public List<Squad> findAll() {
