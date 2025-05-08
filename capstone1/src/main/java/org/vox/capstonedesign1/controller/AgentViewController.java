@@ -8,11 +8,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.vox.capstonedesign1.domain.Agent;
 import org.vox.capstonedesign1.domain.Squad;
 import org.vox.capstonedesign1.dto.AgentViewResponse;
 import org.vox.capstonedesign1.dto.SquadViewResponse;
-import org.vox.capstonedesign1.repository.AgentRepository;
+import org.vox.capstonedesign1.service.AgentService;
 import org.vox.capstonedesign1.service.AgentSignalService;
 import org.vox.capstonedesign1.service.SquadService;
 
@@ -25,8 +24,8 @@ import java.util.List;
 public class AgentViewController {
 
     private final AgentSignalService agentSignalService;
-    private final AgentRepository agentRepository;
     private final SquadService squadService;
+    private final AgentService agentService;
 
     /**
      * [GET] /main/squads/{squadId}
@@ -34,14 +33,14 @@ public class AgentViewController {
      */
     @GetMapping("/{squadId}")
     public String getAllAgentsInSquad(@PathVariable Long squadId, Model model) {
-            Squad squad = squadService.findById(squadId);
-            List<String> deviceSerialNumbers = agentSignalService.getDeviceSerialNumbers(squadId);
-            List<AgentViewResponse> agentStatuses = agentSignalService.getLatestSignalsForDevices(deviceSerialNumbers);
-            log.info("agentStatuses size: {}", agentStatuses.size());
-            agentStatuses.forEach(status -> log.info("Agent: {}", status.getAgentName()));
-            model.addAttribute("squad", new SquadViewResponse(squad));
-            model.addAttribute("agentStatuses", agentStatuses);
-            return "squad-detail";
+        Squad squad = squadService.findById(squadId);
+        List<String> deviceSerialNumbers = agentService.getDeviceSerialNumbersBySquadId(squadId);
+        List<AgentViewResponse> agentStatuses = agentSignalService.getLatestSignalsForDevices(deviceSerialNumbers);
+        log.info("agentStatuses size: {}", agentStatuses.size());
+        agentStatuses.forEach(status -> log.info("Agent: {}", status.getAgentName()));
+        model.addAttribute("squad", new SquadViewResponse(squad));
+        model.addAttribute("agentStatuses", agentStatuses);
+        return "squad-detail";
     }
 
     /**
@@ -49,11 +48,10 @@ public class AgentViewController {
      * 특정 요원의 최신 상태 조회
      */
     @GetMapping("/{squadId}/agents/{agentId}")
-    public ResponseEntity<AgentViewResponse> getAgentStatus(@PathVariable Long squadId,@PathVariable Long agentId) {
-        Agent agent = agentRepository.findBySquad_SquadIdAndAgentId(squadId, agentId)
-                .orElseThrow(() -> new IllegalArgumentException("소대" + squadId + "에 요원" + agentId + "가 존재하지 않습니다."));
-        String deviceSerialNumber = agent.getDevice().getDeviceSerialNumber();
-        AgentViewResponse response= agentSignalService.getLatestSignalByDeviceSerialNumber(deviceSerialNumber);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<AgentViewResponse> getAgentStatus(@PathVariable Long squadId, @PathVariable Long agentId, Model model) {
+        String deviceSerialNumber = agentService.getDeviceSerialNumberBySquadIdAndId(squadId, agentId);
+        AgentViewResponse agentStatus = agentSignalService.getLatestSignalByDeviceSerialNumber(deviceSerialNumber);
+        model.addAttribute("agentStatus", agentStatus);
+        return ResponseEntity.ok(agentStatus);
     }
 }

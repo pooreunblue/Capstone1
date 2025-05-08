@@ -1,6 +1,7 @@
 package org.vox.capstonedesign1.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.vox.capstonedesign1.domain.Agent;
 import org.vox.capstonedesign1.domain.AgentSignal;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AgentSignalService {
@@ -40,14 +42,8 @@ public class AgentSignalService {
         agentSignalRepository.save(agentSignal);
     }
 
-    public List<String> getDeviceSerialNumbers(Long squadId) {
-        List<Agent> agents = agentRepository.findBySquad_SquadIdOrderByAgentIdAsc(squadId);
-        return agents.stream()
-                .map(agent -> agent.getDevice().getDeviceSerialNumber())
-                .collect(Collectors.toList());
-    }
-
     public AgentViewResponse getLatestSignalByDeviceSerialNumber(String deviceSerialNumber) {
+        System.out.println("deviceSerialNumber: " + deviceSerialNumber);
         AgentSignal latestSignal = agentSignalRepository.findTopByDevice_DeviceSerialNumberOrderByTimeStampDesc(deviceSerialNumber)
                 .orElseThrow(() -> new IllegalArgumentException("deviceSerialNumber" + deviceSerialNumber + "의 데이터가 없습니다."));
         Agent agent = agentRepository.findByDevice_DeviceSerialNumber(deviceSerialNumber)
