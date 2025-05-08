@@ -3,7 +3,6 @@ package org.vox.capstonedesign1.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.vox.capstonedesign1.domain.Agent;
 import org.vox.capstonedesign1.domain.AgentSignal;
 import org.vox.capstonedesign1.domain.Device;
 import org.vox.capstonedesign1.domain.EstimatedStatus;
@@ -18,6 +17,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -42,16 +42,16 @@ public class AgentSignalService {
         agentSignalRepository.save(agentSignal);
     }
 
-    public AgentViewResponse getLatestSignalByDeviceSerialNumber(String deviceSerialNumber) {
-        System.out.println("deviceSerialNumber: " + deviceSerialNumber);
-        AgentSignal latestSignal = agentSignalRepository.findTopByDevice_DeviceSerialNumberOrderByTimeStampDesc(deviceSerialNumber)
-                .orElseThrow(() -> new IllegalArgumentException("deviceSerialNumber" + deviceSerialNumber + "의 데이터가 없습니다."));
-        Agent agent = agentRepository.findByDevice_DeviceSerialNumber(deviceSerialNumber)
-                .orElseThrow(() -> new IllegalArgumentException("deviceSerialNumber" + deviceSerialNumber + "에 연결된 agent가 없습니다."));
-        return new AgentViewResponse(agent, latestSignal);
+    public Optional<AgentSignal> findLatestSignalByAgentId(String agentName) {
+        return agentSignalRepository.findTopByAgent_AgentNameOrderByTimeStampDesc(agentName);
     }
 
-    // 여러 명의 최신 상태 조회 (ex: 최대 6명)
+    public AgentViewResponse getLatestSignalByDeviceSerialNumber(String deviceSerialNumber) {
+        AgentSignal latestSignal = agentSignalRepository.findTopByDevice_DeviceSerialNumberOrderByTimeStampDesc(deviceSerialNumber)
+                .orElseThrow(() -> new IllegalArgumentException("deviceSerialNumber" + deviceSerialNumber + "의 데이터가 없습니다."));
+        return new AgentViewResponse(latestSignal);
+    }
+
     public List<AgentViewResponse> getLatestSignalsForDevices(List<String> deviceSerialNumbers) {
         return deviceSerialNumbers.stream()
                 .map(this::getLatestSignalByDeviceSerialNumber)

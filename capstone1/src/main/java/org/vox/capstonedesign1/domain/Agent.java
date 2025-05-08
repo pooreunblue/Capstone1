@@ -14,7 +14,7 @@ public class Agent {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "agent_name", nullable = false)
+    @Column(name = "agent_name", nullable = false, unique = true)
     private String agentName;
 
     @ManyToOne

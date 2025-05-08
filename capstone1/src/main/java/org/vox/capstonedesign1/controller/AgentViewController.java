@@ -10,6 +10,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.vox.capstonedesign1.domain.Agent;
+import org.vox.capstonedesign1.domain.AgentSignal;
 import org.vox.capstonedesign1.domain.Squad;
 import org.vox.capstonedesign1.dto.AgentViewResponse;
 import org.vox.capstonedesign1.dto.SquadViewResponse;
@@ -18,6 +20,8 @@ import org.vox.capstonedesign1.service.AgentSignalService;
 import org.vox.capstonedesign1.service.SquadService;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Slf4j
 @Controller
@@ -32,19 +36,22 @@ public class AgentViewController {
     private final AgentService agentService;
 
     /**
-     * [GET] /main/squads/{squadId}
+     * [GET] /main/squads/{id}
      * 특정 소대의 요원 전체 상태 조회
      */
     @GetMapping("/{id}")
-    public String getAllAgentsInSquad(@PathVariable Long id, Model model) {
-        logger.info("🔍 요청된 Squad ID: {}", id);
-        Squad squad = squadService.findById(id);
-        List<String> deviceSerialNumbers = agentService.getDeviceSerialNumbersBySquadId(id);
-        List<AgentViewResponse> agentStatuses = agentSignalService.getLatestSignalsForDevices(deviceSerialNumbers);
-        logger.info("👥 가져온 에이전트 수: {}", agentStatuses.size());
-        agentStatuses.forEach(status -> log.info("Agent: {}", status.getAgentName()));
-        model.addAttribute("squad", new SquadViewResponse(squad));
-        model.addAttribute("agentStatuses", agentStatuses);
+    public String getAllAgentStatusInSquad(@PathVariable Long squadId, Model model) {
+        Squad squad = squadService.findById(squadId);
+        List<Agent> agents = agentService.getAgentsBySquadId(squadId);
+        List<AgentViewResponse> agentStatus = agents.stream()
+                .map(agent -> {
+                    Optional<AgentSignal> latestSignalOpt = agentSignalService.findLatestSignalByAgentId(agent.getAgentName());
+                    return latestSignalOpt.map(AgentViewResponse::new).orElse(null);
+                })
+                .filter(Objects::nonNull)
+                .toList();
+        model.addAttribute("squad", squad);
+        model.addAttribute("agentStatus", agentStatus);
         return "squad-detail";
     }
 

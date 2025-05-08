@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface AgentSignalRepository extends JpaRepository<AgentSignal, Long> {
     Optional<AgentSignal> findTopByDevice_DeviceSerialNumberOrderByTimeStampDesc(String deviceSerialNumber);
+    Optional<AgentSignal> findTopByAgent_AgentNameOrderByTimeStampDesc(String agentName);
 }

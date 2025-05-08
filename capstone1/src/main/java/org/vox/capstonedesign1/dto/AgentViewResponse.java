@@ -18,10 +18,10 @@ public class AgentViewResponse {
     private final int streamingFrequency;
     private final String serverIp;
 
-    public AgentViewResponse(Agent agent, AgentSignal agentSignal) {
-        this.agentName = agent.getAgentName();
+    public AgentViewResponse(AgentSignal agentSignal) {
+        this.agentName = agentSignal.getAgent().getAgentName();
         this.estimatedStatus = agentSignal.getEstimatedStatus().getStatusInformation();
-        this.deviceSerialNumber = agent.getDevice().getDeviceSerialNumber();
+        this.deviceSerialNumber = agentSignal.getDevice().getDeviceSerialNumber();
         this.timeStamp = agentSignal.getTimeStamp();
         this.streamingFrequency = agentSignal.getStreamingFrequency();
         this.serverIp = "15.165.51.47";

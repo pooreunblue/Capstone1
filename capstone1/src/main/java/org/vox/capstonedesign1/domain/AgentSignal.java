@@ -21,6 +21,10 @@ public class AgentSignal {
     private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "agent_name", referencedColumnName = "agent_name", nullable = false)
+    private Agent agent;
+
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "device_serial_number", referencedColumnName = "device_serial_number", nullable = false)
     private Device device;
 
@@ -35,7 +39,8 @@ public class AgentSignal {
     private int streamingFrequency;
 
     @Builder
-    public AgentSignal(Device device, EstimatedStatus estimatedStatus, LocalDateTime timeStamp, int streamingFrequency) {
+    public AgentSignal(Agent agent, Device device, EstimatedStatus estimatedStatus, LocalDateTime timeStamp, int streamingFrequency) {
+        this.agent = agent;
         this.device = device;
         this.estimatedStatus = estimatedStatus;
         this.timeStamp = timeStamp;
