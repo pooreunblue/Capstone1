@@ -49,7 +49,7 @@
         }
         .status.STABLE { color: green; }
         .status.SOS { color: red; }
-        .status.NEED_BACKUO { color: yellow; }
+        .status.NEED_BACKUP { color: yellow; }
         .device-name {
             font-weight: bold;
             margin-top: 0.5rem;
@@ -118,7 +118,7 @@
                      th:classappend="${agentStatus.estimatedStatus != null} ? ' ' + ${agentStatus.estimatedStatus.toUpperCase().replace(' ', '_')} : ''">상태
                 </div>
             </div>
-<!--            <iframe th:src="'/unity-view/' + ${agentStatus.deviceSerialNumber}"></iframe>-->
+            <iframe th:src="'/unity-view/' + ${agentStatus.deviceSerialNumber}"></iframe>
             <div class="device-name" th:text="${agentStatus.deviceSerialNumber}">Samsung s10</div>
         </div>
     </div>

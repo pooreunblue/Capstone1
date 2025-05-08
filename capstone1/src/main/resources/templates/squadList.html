@@ -84,7 +84,7 @@
     <div class="squad-selection">
         <!-- 동적 반복 -->
         <div th:each="squad : ${squads}">
-            <a th:href="@{|/main/squads/${squad.squadId}|}" class="squad-card">
+            <a th:href="@{/main/squads/{id}(id=${squad.id})}" class="squad-card">
                 <div class="card-content">
                     <h2 th:text="${squad.squadName}">소대 이름</h2>
                 </div>

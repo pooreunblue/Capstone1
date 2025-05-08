@@ -14,8 +14,8 @@ public class SquadService {
 
     private final SquadRepository squadRepository;
 
-    public Squad findById(Long squadId) {
-        return squadRepository.findById(squadId)
+    public Squad findById(Long id) {
+        return squadRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Squad not found"));
     }
 
