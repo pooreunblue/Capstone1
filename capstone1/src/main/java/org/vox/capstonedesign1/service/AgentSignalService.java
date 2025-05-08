@@ -3,6 +3,7 @@ package org.vox.capstonedesign1.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.vox.capstonedesign1.domain.Agent;
 import org.vox.capstonedesign1.domain.AgentSignal;
 import org.vox.capstonedesign1.domain.Device;
 import org.vox.capstonedesign1.domain.EstimatedStatus;
@@ -31,10 +32,12 @@ public class AgentSignalService {
     private final EstimatedStatusRepository estimatedStatusRepository;
 
     public void saveSignal(SaveAgentSignalRequest request) {
+        Agent agent = fetchAgentByAgentName(request);
         Device device = fetchDeviceBySerialNumber(request);
         EstimatedStatus estimatedStatus = fetchStatusById(request);
         LocalDateTime timeStamp = LocalDateTime.parse(request.getTimeStamp(), DateTimeFormatter.ISO_DATE_TIME);
         AgentSignal agentSignal = AgentSignal.builder()
+                .agent(agent)
                 .device(device)
                 .estimatedStatus(estimatedStatus)
                 .timeStamp(timeStamp)
@@ -57,6 +60,11 @@ public class AgentSignalService {
                 .map(this::getLatestSignalByDeviceSerialNumber)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
+    }
+
+    private Agent fetchAgentByAgentName(SaveAgentSignalRequest request) {
+        return agentRepository.findByAgentName(request.getAgentName())
+                .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 요원"));
     }
 
     private Device fetchDeviceBySerialNumber(SaveAgentSignalRequest request) {
