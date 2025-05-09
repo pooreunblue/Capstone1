@@ -125,7 +125,7 @@
     <div class="log-panel">
         <div class="log-section">
             <h4>서버 정보</h4>
-            <div th:text="'IP: ' + ${serverIp}">IP: 192.168.0.1</div>
+            <div>IP: 15.165.51.47</div>
             <div th:each="agentStatus : ${agentStatuses}">
                 <span th:text="'Agent ' + ${agentStatus.agentName} + ': ' + ${agentStatus.streamingFrequency} + 'Hz'"></span><br/>
             </div>

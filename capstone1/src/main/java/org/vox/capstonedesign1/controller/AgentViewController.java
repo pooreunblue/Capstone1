@@ -38,7 +38,7 @@ public class AgentViewController {
     public String getAllAgentStatusInSquad(@PathVariable Long id, Model model) {
         Squad squad = squadService.findById(id);
         List<Agent> agents = agentService.getAgentsBySquadId(id);
-        List<AgentViewResponse> agentStatus = agents.stream()
+        List<AgentViewResponse> agentStatuses = agents.stream()
                 .map(agent -> {
                     Optional<AgentSignal> latestSignalOpt = agentSignalService.findLatestSignalByAgentId(agent.getAgentName());
                     return latestSignalOpt.map(AgentViewResponse::new).orElse(null);
@@ -46,7 +46,7 @@ public class AgentViewController {
                 .filter(Objects::nonNull)
                 .toList();
         model.addAttribute("squad", squad);
-        model.addAttribute("agentStatus", agentStatus);
+        model.addAttribute("agentStatuses", agentStatuses);
         return "squad-detail";
     }
 

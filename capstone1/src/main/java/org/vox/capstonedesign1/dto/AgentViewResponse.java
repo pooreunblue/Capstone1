@@ -16,7 +16,6 @@ public class AgentViewResponse {
     private final String deviceSerialNumber;
     private final LocalDateTime timeStamp;
     private final int streamingFrequency;
-    private final String serverIp;
 
     public AgentViewResponse(AgentSignal agentSignal) {
         this.agentName = agentSignal.getAgent().getAgentName();
@@ -24,6 +23,5 @@ public class AgentViewResponse {
         this.deviceSerialNumber = agentSignal.getDevice().getDeviceSerialNumber();
         this.timeStamp = agentSignal.getTimeStamp();
         this.streamingFrequency = agentSignal.getStreamingFrequency();
-        this.serverIp = "15.165.51.47";
     }
 }
