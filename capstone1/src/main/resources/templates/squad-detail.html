@@ -111,6 +111,7 @@
 </header>
 <div class="container">
     <div class="cards">
+        <!-- @thymesVar id="agentStatus" type="org.vox.capstonedesign1.dto.AgentViewResponse" -->
         <div class="card" th:each="agentStatus : ${agentStatuses}">
             <div>
                 <div th:text="${agentStatus.agentName}">요원</div>
