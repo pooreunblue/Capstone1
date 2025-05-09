@@ -27,17 +27,14 @@ import java.util.stream.Collectors;
 public class AgentSignalService {
 
     private final AgentSignalRepository agentSignalRepository;
-    private final AgentRepository agentRepository;
     private final DeviceRepository deviceRepository;
     private final EstimatedStatusRepository estimatedStatusRepository;
 
     public void saveSignal(SaveAgentSignalRequest request) {
-        Agent agent = fetchAgentByAgentName(request);
         Device device = fetchDeviceBySerialNumber(request);
         EstimatedStatus estimatedStatus = fetchStatusById(request);
         LocalDateTime timeStamp = LocalDateTime.parse(request.getTimeStamp(), DateTimeFormatter.ISO_DATE_TIME);
         AgentSignal agentSignal = AgentSignal.builder()
-                .agent(agent)
                 .device(device)
                 .estimatedStatus(estimatedStatus)
                 .timeStamp(timeStamp)
@@ -45,27 +42,22 @@ public class AgentSignalService {
         agentSignalRepository.save(agentSignal);
     }
 
-    public Optional<AgentSignal> findLatestSignalByAgentId(String agentName) {
-        return agentSignalRepository.findTopByAgent_AgentNameOrderByTimeStampDesc(agentName);
+    public Optional<AgentSignal> findLatestSignalByAgent(Agent agent) {
+        return agentSignalRepository.findTopByAgentOrderByTimeStampDesc(agent);
     }
 
-    public AgentViewResponse getLatestSignalByDeviceSerialNumber(String deviceSerialNumber) {
-        AgentSignal latestSignal = agentSignalRepository.findTopByDevice_DeviceSerialNumberOrderByTimeStampDesc(deviceSerialNumber)
-                .orElseThrow(() -> new IllegalArgumentException("deviceSerialNumber" + deviceSerialNumber + "의 데이터가 없습니다."));
-        return new AgentViewResponse(latestSignal);
-    }
-
-    public List<AgentViewResponse> getLatestSignalsForDevices(List<String> deviceSerialNumbers) {
-        return deviceSerialNumbers.stream()
-                .map(this::getLatestSignalByDeviceSerialNumber)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-    }
-
-    private Agent fetchAgentByAgentName(SaveAgentSignalRequest request) {
-        return agentRepository.findByAgentName(request.getAgentName())
-                .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 요원"));
-    }
+//    public AgentViewResponse getLatestSignalByDeviceSerialNumber(String deviceSerialNumber) {
+//        AgentSignal latestSignal = agentSignalRepository.findTopByDevice_DeviceSerialNumberOrderByTimeStampDesc(deviceSerialNumber)
+//                .orElseThrow(() -> new IllegalArgumentException("deviceSerialNumber" + deviceSerialNumber + "의 데이터가 없습니다."));
+//        return new AgentViewResponse(latestSignal);
+//    }
+//
+//    public List<AgentViewResponse> getLatestSignalsForDevices(List<String> deviceSerialNumbers) {
+//        return deviceSerialNumbers.stream()
+//                .map(this::getLatestSignalByDeviceSerialNumber)
+//                .filter(Objects::nonNull)
+//                .collect(Collectors.toList());
+//    }
 
     private Device fetchDeviceBySerialNumber(SaveAgentSignalRequest request) {
         return deviceRepository.findByDeviceSerialNumber(request.getDeviceSerialNumber())

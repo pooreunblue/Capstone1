@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${squad.squadName} + ' 현황'">소대 현황</title>
+    <title>소대 현황</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
     <style>
         body {
@@ -105,6 +105,7 @@
         <img src="https://i.ibb.co/YBDLXjzs/vox.jpg" alt="voxlogo" class="voxlogo">
     </a>
 </div>
+<!-- 메인 콘텐츠 -->
 <header>
     <div style="text-align: center;">[[${squad.squadName}]] 현황</div>
 </header>
@@ -112,10 +113,9 @@
     <div class="cards">
         <div class="card" th:each="agentStatus : ${agentStatuses}">
             <div>
-                <div th:text="'Agent ' + ${agentStatus.agentName}">요원</div>
+                <div th:text="${agentStatus.agentName}">요원</div>
                 <div class="status"
-                     th:text="${agentStatus.estimatedStatus}"
-                     th:classappend="${agentStatus.estimatedStatus != null} ? ' ' + ${agentStatus.estimatedStatus.toUpperCase().replace(' ', '_')} : ''">상태
+                     th:text="${agentStatus.estimatedStatus != null} ? ${agentStatus.estimatedStatus.toUpperCase().replace(' ', '_')} : 'UNKNOWN'">상태
                 </div>
             </div>
             <iframe th:src="'/unity-view/' + ${agentStatus.deviceSerialNumber}"></iframe>
@@ -127,7 +127,7 @@
             <h4>서버 정보</h4>
             <div>IP: 15.165.51.47</div>
             <div th:each="agentStatus : ${agentStatuses}">
-                <span th:text="'Agent ' + ${agentStatus.agentName} + ': ' + ${agentStatus.streamingFrequency} + 'Hz'"></span><br/>
+                <span th:text="${agentStatus.agentName} + ': ' + ${agentStatus.streamingFrequency} + 'Hz'"></span><br/>
             </div>
             <br/>
 

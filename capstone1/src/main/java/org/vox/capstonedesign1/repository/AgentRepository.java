@@ -10,5 +10,5 @@ public interface AgentRepository extends JpaRepository<Agent, Long> {
     Optional<Agent> findByAgentName(String agentName);
     Optional<Agent> findBySquad_IdAndId(Long squadId, Long agentId);
     Optional<Agent> findByDevice_DeviceSerialNumber(String deviceSerialNumber);
-    List<Agent> findBySquad_IdOrderByIdAsc(Long squadId);
+    List<Agent> findBySquad_IdOrderById(Long squadId);
 }

@@ -37,28 +37,36 @@ public class AgentViewController {
     @GetMapping("/{id}")
     public String getAllAgentStatusInSquad(@PathVariable Long id, Model model) {
         Squad squad = squadService.findById(id);
-        List<Agent> agents = agentService.getAgentsBySquadId(id);
-        List<AgentViewResponse> agentStatuses = agents.stream()
-                .map(agent -> {
-                    Optional<AgentSignal> latestSignalOpt = agentSignalService.findLatestSignalByAgentId(agent.getAgentName());
-                    return latestSignalOpt.map(AgentViewResponse::new).orElse(null);
-                })
-                .filter(Objects::nonNull)
-                .toList();
+        List<AgentViewResponse> agentStatuses = agentService.getAgentStatusesBySquadId(id);
         model.addAttribute("squad", squad);
         model.addAttribute("agentStatuses", agentStatuses);
         return "squad-detail";
     }
 
-    /**
-     * [GET] /main/squads/{squadId}/agent/{agentId}
-     * 특정 요원의 최신 상태 조회
-     */
-    @GetMapping("/{id}/agents/{agentId}")
-    public ResponseEntity<AgentViewResponse> getAgentStatus(@PathVariable Long id, @PathVariable Long agentId, Model model) {
-        String deviceSerialNumber = agentService.getDeviceSerialNumberBySquadIdAndId(id, agentId);
-        AgentViewResponse agentStatus = agentSignalService.getLatestSignalByDeviceSerialNumber(deviceSerialNumber);
-        model.addAttribute("agentStatus", agentStatus);
-        return ResponseEntity.ok(agentStatus);
-    }
+//    @GetMapping("/{id}")
+//    public ResponseEntity<List<AgentViewResponse>> findAgents(@PathVariable Long id) {
+//        List<Agent> agents = agentService.getAgentsBySquadId(id);
+//        List<AgentViewResponse> agentStatuses = agents.stream()
+//                .map(agent -> {
+//                    Optional<AgentSignal> latestSignalOpt = agentSignalService.findLatestSignalByAgentName(agent.getAgentName());
+//                    return latestSignalOpt.map(AgentViewResponse::new).orElse(null);
+//                })
+//                .filter(Objects::nonNull)
+//                .toList();
+//
+//        return ResponseEntity.ok()
+//                .body(agentStatuses);
+//    }
+
+//    /**
+//     * [GET] /main/squads/{squadId}/agent/{agentId}
+//     * 특정 요원의 최신 상태 조회
+//     */
+//    @GetMapping("/{id}/agents/{agentId}")
+//    public ResponseEntity<AgentViewResponse> getAgentStatus(@PathVariable Long id, @PathVariable Long agentId, Model model) {
+//        String deviceSerialNumber = agentService.getDeviceSerialNumberBySquadIdAndId(id, agentId);
+//        AgentViewResponse agentStatus = agentSignalService.getLatestSignalByDeviceSerialNumber(deviceSerialNumber);
+//        model.addAttribute("agentStatus", agentStatus);
+//        return ResponseEntity.ok(agentStatus);
+//    }
 }

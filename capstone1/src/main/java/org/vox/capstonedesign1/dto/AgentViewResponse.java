@@ -1,7 +1,5 @@
 package org.vox.capstonedesign1.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import org.vox.capstonedesign1.domain.Agent;
 import org.vox.capstonedesign1.domain.AgentSignal;
@@ -17,8 +15,8 @@ public class AgentViewResponse {
     private final LocalDateTime timeStamp;
     private final int streamingFrequency;
 
-    public AgentViewResponse(AgentSignal agentSignal) {
-        this.agentName = agentSignal.getAgent().getAgentName();
+    public AgentViewResponse(Agent agent, AgentSignal agentSignal) {
+        this.agentName = agent.getAgentName();
         this.estimatedStatus = agentSignal.getEstimatedStatus().getStatusInformation();
         this.deviceSerialNumber = agentSignal.getDevice().getDeviceSerialNumber();
         this.timeStamp = agentSignal.getTimeStamp();
