@@ -67,7 +67,7 @@
             <h3 th:text="${agent.agentName}">Agent</h3>
             <p th:text="${agent.estimatedStatus}">Status</p>
             <p th:text="${agent.deviceSerialNumber}">Device</p>
-<!--            <iframe th:src="@{'/unity-view/' + ${agent.deviceSerialNumber}}"></iframe>-->
+            <iframe th:src="@{'/unity-view/' + ${agent.deviceSerialNumber}}"></iframe>
         </div>
     </div>
 
