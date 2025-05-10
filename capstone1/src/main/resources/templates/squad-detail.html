@@ -107,7 +107,7 @@
 </div>
 <!-- 메인 콘텐츠 -->
 <header>
-    <div style="text-align: center;">[[${squad.squadName}]] 현황</div>
+    <div style="text-align: center;">[[${squadId}]] + 소대 현황</div>
 </header>
 <div class="container">
     <div class="cards">
@@ -116,10 +116,9 @@
             <div>
                 <div th:text="${agentStatus.agentName}">요원</div>
                 <div class="status"
-                     th:text="${agentStatus.estimatedStatus != null} ? ${agentStatus.estimatedStatus.toUpperCase().replace(' ', '_')} : 'UNKNOWN'">상태
-                </div>
+                     th:text="${agentStatus.estimatedStatus != null ? agentStatus.estimatedStatus.toUpperCase().replace(' ', '_') : 'UNKNOWN'}">상태</div>
             </div>
-            <iframe th:src="'/unity-view/' + ${agentStatus.deviceSerialNumber}"></iframe>
+            <iframe th:src="'/unity-view/' + ${agentStatus.deviceSerialNumber}">유니티</iframe>
             <div class="device-name" th:text="${agentStatus.deviceSerialNumber}">Samsung s10</div>
         </div>
     </div>
@@ -127,6 +126,7 @@
         <div class="log-section">
             <h4>서버 정보</h4>
             <div>IP: 15.165.51.47</div>
+            <!-- @thymesVar id="agentStatus" type="org.vox.capstonedesign1.dto.AgentViewResponse" -->
             <div th:each="agentStatus : ${agentStatuses}">
                 <span th:text="${agentStatus.agentName} + ': ' + ${agentStatus.streamingFrequency} + 'Hz'"></span><br/>
             </div>
