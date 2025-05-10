@@ -41,7 +41,7 @@ public class AgentViewController {
         List<AgentViewResponse> statuses = agentService.getAgentStatusesBySquadId(id);
         model.addAttribute("squad", squadViewResponse);
         model.addAttribute("statuses", statuses);
-        return "squad-detail";
+        return "squadDetail";
     }
 
 //    @GetMapping("/{id}")

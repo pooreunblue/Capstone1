@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${squad.squadName} + ' 현황'">소대 현황</title>
+    <style>
+        body { font-family: 'Noto Sans KR', sans-serif; margin: 0; padding: 0; background-color: #ffffff; color: #000000; }
+        header { padding: 1rem; font-size: 24px; font-weight: bold; }
+        .voxlogo { height: 90px; margin: 20px; }
+        .container { display: flex; flex-direction: row; justify-content: space-between; }
+        .agent-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; width: 70%; }
+        .agent-card { border: 1px solid #ddd; padding: 20px; border-radius: 10px; text-align: center; }
+        .status-stable { color: green; font-weight: bold; }
+        .status-sos { color: red; font-weight: bold; }
+        .status-need { color: gray; font-weight: bold; }
+        .info-panel {
+            width: 25%;
+            padding: 1rem;
+            margin-left: auto;
+            overflow-y: auto;
+            font-family: monospace;
+            background-color: #ffffff;
+            border-radius: 10px;
+            height: 100%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .log-section {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: flex-start;
+            width: 100%;
+        }
+        .log-section h4 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+        .log-box {
+            background-color: #f5f5f5;
+            border-radius: 5px;
+            padding: 0.5rem;
+            width: 100%;
+            min-height: 300px; /* 원하는 높이로 조절 */
+            overflow-y: auto;
+        }
+        iframe { width: 100%; height: 150px; border: none; }
+    </style>
+</head>
+<body>
+<div class="header">
+    <a href="/main" class="logo-container">
+        <img src="https://i.ibb.co/YBDLXjzs/vox.jpg" alt="voxlogo" class="voxlogo">
+    </a>
+</div>
+<header>
+    <div style="text-align: center;">[[${squad.squadName}]] 현황</div>
+</header>
+
+<div class="container">
+    <!-- AGENT CARDS -->
+    <div class="agent-grid">
+        <div class="agent-card" th:each="agent : ${statuses}">
+            <h3 th:text="${agent.agentName}">Agent</h3>
+            <p th:classappend="'status-' + ${agent.estimatedStatus.toLowerCase().replaceAll(' ', '')}"
+               th:text="${agent.estimatedStatus}">Status</p>
+            <p th:text="${agent.deviceSerialNumber}">Device</p>
+            <iframe th:src="@{'/unity-view/' + ${agent.deviceSerialNumber}}"></iframe>
+        </div>
+    </div>
+
+    <!-- INFO PANEL -->
+    <div class="info-panel">
+        <div>
+            <p><strong>IP:</strong> 15.165.51.47</p>
+            <div th:each="agent : ${statuses}">
+                <p th:text="${agent.agentName + ': ' + agent.streamingFrequency + 'Hz'}">Agent Info</p>
+            </div>
+            <p>Local Server: 100Hz</p>
+            <p>Streaming Server: 50Hz</p>
+        </div>
+        <hr/>
+        <div class="log-section">
+            <h4>로그</h4>
+            <div class="log-box">
+                <div th:each="agent : ${statuses}">
+                    <span th:text="'[' + ${#temporals.format(agent.timeStamp, 'a h:mm:ss', 'ko')} + ']' + ${agent.agentName} + ': ' + ${agent.estimatedStatus}"></span><br/>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
