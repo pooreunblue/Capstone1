@@ -85,7 +85,7 @@
             <h4>로그</h4>
             <div class="log-box">
                 <div th:each="agent : ${statuses}">
-<!--                    <span th:text="'[' + ${#temporals.format(agent.timeStamp, 'a h:mm:ss', 'ko')} + ']' + ${agent.agentName} + ': ' + ${agent.estimatedStatus}"></span><br/>-->
+                    <span th:text="${#temporals.format(agent.timeStamp, 'yyyy-MM-dd HH:mm:ss')} + ${agent.agentName} + ': ' + ${agent.estimatedStatus}"></span><br/>-->
                 </div>
             </div>
         </div>
