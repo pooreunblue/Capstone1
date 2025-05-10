@@ -25,7 +25,6 @@ public class AgentService {
 
     public List<AgentViewResponse> getAgentStatusesBySquadId(Long squadId) {
         List<Agent> agents = agentRepository.findBySquad_IdOrderById(squadId);
-
         return agents.stream()
                 .map(agent -> {
                     Optional<AgentSignal> signalOpt = agentSignalService.findLatestSignalByAgent(agent);
