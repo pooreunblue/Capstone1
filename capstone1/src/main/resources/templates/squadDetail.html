@@ -72,25 +72,25 @@
     </div>
 
     <!-- INFO PANEL &ndash -->
-<!--    <div class="info-panel">-->
-<!--        <div>-->
-<!--            <p><strong>IP:</strong> 15.165.51.47</p>-->
-<!--            <div th:each="agent : ${statuses}">-->
-<!--                <p th:text="${agent.agentName + ': ' + agent.streamingFrequency + 'Hz'}">Agent Info</p>-->
-<!--            </div>-->
-<!--            <p>Local Server: 100Hz</p>-->
-<!--            <p>Streaming Server: 50Hz</p>-->
-<!--        </div>-->
-<!--        <hr/>-->
-<!--        <div class="log-section">-->
-<!--            <h4>로그</h4>-->
-<!--            <div class="log-box">-->
-<!--                <div th:each="agent : ${statuses}">-->
-<!--                    <span th:text="'[' + ${#temporals.format(agent.timeStamp, 'a h:mm:ss', 'ko')} + ']' + ${agent.agentName} + ': ' + ${agent.estimatedStatus}"></span><br/>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
+    <div class="info-panel">
+        <div>
+            <p><strong>IP:</strong> 15.165.51.47</p>
+            <div th:each="agent : ${statuses}">
+                <p th:text="${agent.agentName + ': ' + agent.streamingFrequency + 'Hz'}">Agent Info</p>
+            </div>
+                <p>Local Server: 100Hz</p>
+                <p>Streaming Server: 50Hz</p>
+            </div>
+            <hr/>
+            <div class="log-section">
+                <h4>로그</h4>
+                <div class="log-box">
+                    <div th:each="agent : ${statuses}">
+                    <span th:text="'[' + ${#temporals.format(agent.timeStamp, 'a h:mm:ss', 'ko')} + ']' + ${agent.agentName} + ': ' + ${agent.estimatedStatus}"></span><br/>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 </body>
 </html>
