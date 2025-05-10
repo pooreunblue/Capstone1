@@ -12,6 +12,7 @@ import org.vox.capstonedesign1.domain.Agent;
 import org.vox.capstonedesign1.domain.AgentSignal;
 import org.vox.capstonedesign1.domain.Squad;
 import org.vox.capstonedesign1.dto.AgentViewResponse;
+import org.vox.capstonedesign1.dto.SquadViewResponse;
 import org.vox.capstonedesign1.service.AgentService;
 import org.vox.capstonedesign1.service.AgentSignalService;
 import org.vox.capstonedesign1.service.SquadService;
@@ -26,7 +27,6 @@ import java.util.Optional;
 @RequestMapping("/main/squads")
 public class AgentViewController {
 
-    private final AgentSignalService agentSignalService;
     private final SquadService squadService;
     private final AgentService agentService;
 
@@ -36,9 +36,10 @@ public class AgentViewController {
      */
     @GetMapping("/{id}")
     public String getAllAgentStatusInSquad(@PathVariable Long id, Model model) {
-        List<AgentViewResponse> agentStatuses = agentService.getAgentStatusesBySquadId(id);
-        model.addAttribute("squadId", id);
-        model.addAttribute("agentStatuses", agentStatuses);
+        Squad squad = squadService.findById(id);
+        List<AgentViewResponse> statuses = agentService.getAgentStatusesBySquadId(id);
+        model.addAttribute("squad", new SquadViewResponse(squad));
+        model.addAttribute("statuses", statuses);
         return "squad-detail";
     }
 
