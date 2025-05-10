@@ -47,7 +47,7 @@
             min-height: 300px; /* 원하는 높이로 조절 */
             overflow-y: auto;
         }
-        iframe { width: 100%; height: 150px; border: none; }
+        iframe { width: 960%; height: 600px; border: none; }
     </style>
 </head>
 <body>
@@ -85,7 +85,7 @@
             <h4>로그</h4>
             <div class="log-box">
                 <div th:each="agent : ${statuses}">
-                    <span th:text="${#temporals.format(agent.timeStamp, 'yyyy-MM-dd HH:mm:ss')} + ${agent.agentName} + ': ' + ${agent.estimatedStatus}"></span><br/>-->
+                    <span th:text="${#temporals.format(agent.timeStamp, 'yyyy-MM-dd HH:mm:ss')} + ${agent.agentName} + ': ' + ${agent.estimatedStatus}"></span><br/>
                 </div>
             </div>
         </div>
