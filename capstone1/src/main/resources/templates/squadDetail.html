@@ -65,8 +65,7 @@
     <div class="agent-grid">
         <div class="agent-card" th:each="agent : ${statuses}">
             <h3 th:text="${agent.agentName}">Agent</h3>
-<!--            <p th:classappend="'status-' + ${agent.estimatedStatus.toLowerCase().replaceAll(' ', '')}"-->
-<!--               th:text="${agent.estimatedStatus}">Status</p>-->
+            <p th:text="${agent.estimatedStatus}">Status</p>
 <!--            <p th:text="${agent.deviceSerialNumber}">Device</p>-->
 <!--            <iframe th:src="@{'/unity-view/' + ${agent.deviceSerialNumber}}"></iframe>-->
         </div>
