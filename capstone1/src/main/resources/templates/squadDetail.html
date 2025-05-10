@@ -78,14 +78,14 @@
             <div th:each="agent : ${statuses}">
                 <p th:text="${agent.agentName + ': ' + agent.streamingFrequency + 'Hz'}">Agent Info</p>
             </div>
-                <p>Local Server: 100Hz</p>
-                <p>Streaming Server: 50Hz</p>
-            </div>
-            <hr/>
-            <div class="log-section">
-                <h4>로그</h4>
-                <div class="log-box">
-                    <div th:each="agent : ${statuses}">
+            <p>Local Server: 100Hz</p>
+            <p>Streaming Server: 50Hz</p>
+        </div>
+        <hr/>
+        <div class="log-section">
+            <h4>로그</h4>
+            <div class="log-box">
+                <div th:each="agent : ${statuses}">
                     <span th:text="'[' + ${#temporals.format(agent.timeStamp, 'a h:mm:ss', 'ko')} + ']' + ${agent.agentName} + ': ' + ${agent.estimatedStatus}"></span><br/>
                 </div>
             </div>
