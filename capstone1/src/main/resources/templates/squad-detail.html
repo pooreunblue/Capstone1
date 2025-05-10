@@ -111,7 +111,6 @@
 </header>
 <div class="container">
     <div class="cards">
-        <!-- @thymesVar id="agentStatus" type="org.vox.capstonedesign1.dto.AgentViewResponse" -->
         <div class="card" th:each="agentStatus : ${agentStatuses}">
             <div>
                 <div th:text="${agentStatus.agentName}">요원</div>
@@ -126,7 +125,6 @@
         <div class="log-section">
             <h4>서버 정보</h4>
             <div>IP: 15.165.51.47</div>
-            <!-- @thymesVar id="agentStatus" type="org.vox.capstonedesign1.dto.AgentViewResponse" -->
             <div th:each="agentStatus : ${agentStatuses}">
                 <span th:text="${agentStatus.agentName} + ': ' + ${agentStatus.streamingFrequency} + 'Hz'"></span><br/>
             </div>
