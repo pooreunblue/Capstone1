@@ -60,38 +60,38 @@
     <div style="text-align: center;">[[${squad.squadName}]] 현황</div>
 </header>
 
-<div class="container">
-    <!-- AGENT CARDS -->
-    <div class="agent-grid">
-        <div class="agent-card" th:each="agent : ${statuses}">
-            <h3 th:text="${agent.agentName}">Agent</h3>
-            <p th:classappend="'status-' + ${agent.estimatedStatus.toLowerCase().replaceAll(' ', '')}"
-               th:text="${agent.estimatedStatus}">Status</p>
-            <p th:text="${agent.deviceSerialNumber}">Device</p>
-            <iframe th:src="@{'/unity-view/' + ${agent.deviceSerialNumber}}"></iframe>
-        </div>
-    </div>
+<!--<div class="container">-->
+<!--    &lt;!&ndash; AGENT CARDS &ndash;&gt;-->
+<!--    <div class="agent-grid">-->
+<!--        <div class="agent-card" th:each="agent : ${statuses}">-->
+<!--            <h3 th:text="${agent.agentName}">Agent</h3>-->
+<!--            <p th:classappend="'status-' + ${agent.estimatedStatus.toLowerCase().replaceAll(' ', '')}"-->
+<!--               th:text="${agent.estimatedStatus}">Status</p>-->
+<!--            <p th:text="${agent.deviceSerialNumber}">Device</p>-->
+<!--            <iframe th:src="@{'/unity-view/' + ${agent.deviceSerialNumber}}"></iframe>-->
+<!--        </div>-->
+<!--    </div>-->
 
-    <!-- INFO PANEL -->
-    <div class="info-panel">
-        <div>
-            <p><strong>IP:</strong> 15.165.51.47</p>
-            <div th:each="agent : ${statuses}">
-                <p th:text="${agent.agentName + ': ' + agent.streamingFrequency + 'Hz'}">Agent Info</p>
-            </div>
-            <p>Local Server: 100Hz</p>
-            <p>Streaming Server: 50Hz</p>
-        </div>
-        <hr/>
-        <div class="log-section">
-            <h4>로그</h4>
-            <div class="log-box">
-                <div th:each="agent : ${statuses}">
-                    <span th:text="'[' + ${#temporals.format(agent.timeStamp, 'a h:mm:ss', 'ko')} + ']' + ${agent.agentName} + ': ' + ${agent.estimatedStatus}"></span><br/>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-</body>
-</html>
+<!--    &lt;!&ndash; INFO PANEL &ndash;&gt;-->
+<!--    <div class="info-panel">-->
+<!--        <div>-->
+<!--            <p><strong>IP:</strong> 15.165.51.47</p>-->
+<!--            <div th:each="agent : ${statuses}">-->
+<!--                <p th:text="${agent.agentName + ': ' + agent.streamingFrequency + 'Hz'}">Agent Info</p>-->
+<!--            </div>-->
+<!--            <p>Local Server: 100Hz</p>-->
+<!--            <p>Streaming Server: 50Hz</p>-->
+<!--        </div>-->
+<!--        <hr/>-->
+<!--        <div class="log-section">-->
+<!--            <h4>로그</h4>-->
+<!--            <div class="log-box">-->
+<!--                <div th:each="agent : ${statuses}">-->
+<!--                    <span th:text="'[' + ${#temporals.format(agent.timeStamp, 'a h:mm:ss', 'ko')} + ']' + ${agent.agentName} + ': ' + ${agent.estimatedStatus}"></span><br/>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+<!--</body>-->
+<!--</html>-->
