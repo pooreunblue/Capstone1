@@ -29,7 +29,7 @@ public class AgentService {
         return agents.stream()
                 .map(agent -> {
                     Optional<AgentSignal> signalOpt = agentSignalService.findLatestSignalByAgent(agent);
-                    return signalOpt.map(signal -> new AgentViewResponse(agent, signal)).orElse(null);
+                    return signalOpt.map(signal -> new AgentViewResponse(agent, signal)).orElseThrow(() -> new RuntimeException("Could not find signal for agent " + agent));
                 })
                 .filter(Objects::nonNull)
                 .toList();
