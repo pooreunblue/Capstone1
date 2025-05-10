@@ -12,7 +12,7 @@
         .agent-card { border: 1px solid #ddd; padding: 20px; border-radius: 10px; text-align: center; }
         .status-STABLE { color: green; font-weight: bold; }
         .status-SOS { color: red; font-weight: bold; }
-        .status-NEED_BACKUP { color: gray; font-weight: bold; }
+        .status-NEED_BACKUP { color: yellow; font-weight: bold; }
         .info-panel {
             width: 25%;
             padding: 1rem;
@@ -84,7 +84,7 @@
         </div>
         <hr/>
         <div class="log-section">
-<!--            <h4>로그</h4>-->
+            <h4>로그</h4>
 <!--            <div class="log-box">-->
 <!--                <div th:each="agent : ${statuses}">-->
 <!--                    <span th:text="'[' + ${#temporals.format(agent.timeStamp, 'a h:mm:ss', 'ko')} + ']' + ${agent.agentName} + ': ' + ${agent.estimatedStatus}"></span><br/>-->
