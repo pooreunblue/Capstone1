@@ -10,9 +10,9 @@
         .container { display: flex; flex-direction: row; justify-content: space-between; }
         .agent-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; width: 70%; }
         .agent-card { border: 1px solid #ddd; padding: 20px; border-radius: 10px; text-align: center; }
-        .status-stable { color: green; font-weight: bold; }
-        .status-sos { color: red; font-weight: bold; }
-        .status-need { color: gray; font-weight: bold; }
+        .status-STABLE { color: green; font-weight: bold; }
+        .status-SOS { color: red; font-weight: bold; }
+        .status-NEED_BACKUP { color: gray; font-weight: bold; }
         .info-panel {
             width: 25%;
             padding: 1rem;
@@ -65,7 +65,7 @@
     <div class="agent-grid">
         <div class="agent-card" th:each="agent : ${statuses}">
             <h3 th:text="${agent.agentName}">Agent</h3>
-            <p th:classappend="'status-' + ${agent.estimatedStatus.toLowerCase().replaceAll(' ', '')}"
+            <p th:classappend="'status-' + ${agent.estimatedStatus}"
                th:text="${agent.estimatedStatus}">Status</p>
             <p th:text="${agent.deviceSerialNumber}">Device</p>
             <iframe th:src="@{'/unity-view/' + ${agent.deviceSerialNumber}}"></iframe>
