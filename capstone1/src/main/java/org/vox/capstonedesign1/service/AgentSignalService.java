@@ -29,12 +29,15 @@ public class AgentSignalService {
     private final AgentSignalRepository agentSignalRepository;
     private final DeviceRepository deviceRepository;
     private final EstimatedStatusRepository estimatedStatusRepository;
+    private final AgentRepository agentRepository;
 
     public void saveSignal(SaveAgentSignalRequest request) {
+        Agent agent = fetchAgentBySerialNumber(request);
         Device device = fetchDeviceBySerialNumber(request);
         EstimatedStatus estimatedStatus = fetchStatusById(request);
         LocalDateTime timeStamp = LocalDateTime.parse(request.getTimeStamp(), DateTimeFormatter.ISO_DATE_TIME);
         AgentSignal agentSignal = AgentSignal.builder()
+                .agent(agent)
                 .device(device)
                 .estimatedStatus(estimatedStatus)
                 .timeStamp(timeStamp)
@@ -58,6 +61,12 @@ public class AgentSignalService {
 //                .filter(Objects::nonNull)
 //                .collect(Collectors.toList());
 //    }
+
+    private Agent fetchAgentBySerialNumber(SaveAgentSignalRequest request) {
+        String deviceSerialNumber = request.getDeviceSerialNumber();
+        return agentRepository.findByDevice_DeviceSerialNumber(deviceSerialNumber)
+                .orElseThrow(() -> new RuntimeException("Agent with serialNumber " + deviceSerialNumber + " not found"));
+    }
 
     private Device fetchDeviceBySerialNumber(SaveAgentSignalRequest request) {
         return deviceRepository.findByDeviceSerialNumber(request.getDeviceSerialNumber())

@@ -17,7 +17,7 @@ import java.util.Optional;
 public class AgentService {
 
     private final AgentRepository agentRepository;
-    private final AgentSignalService agentSignalService;
+    private final AgentSignalRepository agentSignalRepository;
 
     public List<Agent> getAgentsBySquadId(Long squadId) {
         return agentRepository.findBySquad_IdOrderById(squadId);
@@ -27,8 +27,8 @@ public class AgentService {
         List<Agent> agents = agentRepository.findBySquad_IdOrderById(squadId);
         return agents.stream()
                 .map(agent -> {
-                    Optional<AgentSignal> signalOpt = agentSignalService.findLatestSignalByAgent(agent);
-                    return signalOpt.map(signal -> new AgentViewResponse(agent, signal)).orElseThrow(() -> new RuntimeException("Could not find signal for agent " + agent));
+                    Optional<AgentSignal> signalOpt = agentSignalRepository.findTopByAgentOrderByTimeStampDesc(agent);
+                    return signalOpt.map(signal -> new AgentViewResponse(agent, signal)).orElseThrow(() -> new RuntimeException("요원 " + agent + "의 signal을 찾을 수 없습니다."));
                 })
                 .filter(Objects::nonNull)
                 .toList();
