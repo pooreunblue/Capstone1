@@ -36,11 +36,13 @@ public class AgentSignalService {
         Device device = fetchDeviceBySerialNumber(request);
         EstimatedStatus estimatedStatus = fetchStatusById(request);
         LocalDateTime timeStamp = LocalDateTime.parse(request.getTimeStamp(), DateTimeFormatter.ISO_DATE_TIME);
+        double streamingFrequency = request.getStreamingFrequency();
         AgentSignal agentSignal = AgentSignal.builder()
                 .agent(agent)
                 .device(device)
                 .estimatedStatus(estimatedStatus)
                 .timeStamp(timeStamp)
+                .streamingFrequency(streamingFrequency)
                 .build();
         agentSignalRepository.save(agentSignal);
     }
