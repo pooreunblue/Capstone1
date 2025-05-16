@@ -36,10 +36,10 @@ public class AgentSignal {
     private LocalDateTime timeStamp;
 
     @Column(name = "streaming_frequency")
-    private int streamingFrequency;
+    private double streamingFrequency;
 
     @Builder
-    public AgentSignal(Agent agent, Device device, EstimatedStatus estimatedStatus, LocalDateTime timeStamp, int streamingFrequency) {
+    public AgentSignal(Agent agent, Device device, EstimatedStatus estimatedStatus, LocalDateTime timeStamp, double streamingFrequency) {
         this.agent = agent;
         this.device = device;
         this.estimatedStatus = estimatedStatus;
