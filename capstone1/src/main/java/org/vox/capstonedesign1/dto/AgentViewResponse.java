@@ -13,7 +13,7 @@ public class AgentViewResponse {
     private final String estimatedStatus;
     private final String deviceSerialNumber;
     private final LocalDateTime timeStamp;
-    private final int streamingFrequency;
+    private final double streamingFrequency;
 
     public AgentViewResponse(Agent agent, AgentSignal agentSignal) {
         this.agentName = agent.getAgentName();
