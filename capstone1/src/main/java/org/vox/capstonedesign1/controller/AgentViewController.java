@@ -44,21 +44,6 @@ public class AgentViewController {
         return "squadDetail";
     }
 
-//    @GetMapping("/{id}")
-//    public ResponseEntity<List<AgentViewResponse>> findAgents(@PathVariable Long id) {
-//        List<Agent> agents = agentService.getAgentsBySquadId(id);
-//        List<AgentViewResponse> agentStatuses = agents.stream()
-//                .map(agent -> {
-//                    Optional<AgentSignal> latestSignalOpt = agentSignalService.findLatestSignalByAgentName(agent.getAgentName());
-//                    return latestSignalOpt.map(AgentViewResponse::new).orElse(null);
-//                })
-//                .filter(Objects::nonNull)
-//                .toList();
-//
-//        return ResponseEntity.ok()
-//                .body(agentStatuses);
-//    }
-
 //    /**
 //     * [GET] /main/squads/{squadId}/agent/{agentId}
 //     * 특정 요원의 최신 상태 조회
