@@ -1,1 +1,1 @@
-web: java -Djava.net.preferIPv4Stack=true -jar capstone1-1.0.jar
+web: java -Djava.net.preferIPv4Stack=true -jar application.jar
