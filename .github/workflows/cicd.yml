@@ -36,18 +36,7 @@ jobs:
       - name: Set artifact
         run: echo "artifact=$(ls ./build/libs)" >> $GITHUB_ENV
 
-      - name: Build deploy package
-        run: |
-          mkdir -p deploy
-          JAR_PATH=$(ls ./capstone1/build/libs/*.jar | head -n 1)
-          echo "Using JAR: $JAR_PATH"
-          cp "$JAR_PATH" deploy/application.jar
-          cp ./capstone1/Procfile deploy/
-          cp -r ./capstone1/.platform deploy/
-          cd deploy
-          zip -r ../deploy-package.zip .
-
-      - name: Deploy to Elastic Beanstalk
+      - name: Beanstalk Deploy
         uses: einaregilsson/beanstalk-deploy@v20
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -56,7 +45,4 @@ jobs:
           environment_name: Vox-korea-env
           version_label: github-action-${{steps.current-time.outputs.formattedTime}}
           region: ap-northeast-2
-          deployment_package: deploy-package.zip
-
-      - name: Show contents of deploy-package.zip
-        run: unzip -l deploy-package.zip
+          deployment_package: ./capstone1/build/libs/capstone1-1.0.jar

@@ -24,13 +24,7 @@ dependencies {
 }
 
 jar {
-    archiveBaseName.set('application')
-    archiveVersion.set('')
-}
-
-bootJar {
-    archiveBaseName.set('application')
-    archiveVersion.set('')
+    enabled = false
 }
 
 test {
