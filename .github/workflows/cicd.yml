@@ -56,3 +56,6 @@ jobs:
           version_label: github-action-${{steps.current-time.outputs.formattedTime}}
           region: ap-northeast-2
           deployment_package: deploy-package.zip
+
+      - name: Show contents of deploy-package.zip
+        run: unzip -l deploy-package.zip
