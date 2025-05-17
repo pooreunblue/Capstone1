@@ -4,6 +4,7 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.vox.capstonedesign1.util.handler.AgentSignalHandler;
 import org.vox.capstonedesign1.util.handler.UdpMessageHandler;
 
 import java.net.DatagramPacket;
@@ -17,7 +18,7 @@ import java.nio.ByteOrder;
 public class UdpReceiver {
 
     private final DatagramSocket datagramSocket;
-    private final UdpMessageHandler messageHandler;
+    private final AgentSignalHandler messageHandler;
 
     @PostConstruct
     public void start() {
