@@ -40,8 +40,7 @@ jobs:
         run: |
           mkdir deploy
           cp ./capstone1/build/libs/application.jar deploy/
-          cp -r .ebextensions deploy/
-          cd deploy
+          cp -r ./capstone1/.ebextensions deploy/          cd deploy
           zip -r ../deploy-package.zip .
 
       - name: Deploy to Elastic Beanstalk
