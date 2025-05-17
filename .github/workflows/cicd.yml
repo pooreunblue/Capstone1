@@ -39,7 +39,9 @@ jobs:
       - name: Build deploy package
         run: |
           mkdir -p deploy
-          cp ./capstone1/build/libs/*.jar deploy/application.jar
+          JAR_PATH=$(ls ./capstone1/build/libs/*.jar | head -n 1)
+          echo "Using JAR: $JAR_PATH"
+          cp "$JAR_PATH" deploy/application.jar
           cp ./capstone1/Procfile deploy/
           cp -r ./capstone1/.platform deploy/
           cd deploy
