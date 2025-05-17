@@ -39,7 +39,7 @@ jobs:
       - name: Build deploy package with .ebextensions and jar
         run: |
           mkdir deploy
-          cp ./capstone1/build/libs/*.jar deploy/application.jar
+          cp ./capstone1/build/libs/application.jar deploy/
           cp -r ./capstone1/.ebextensions deploy/          
           cd deploy
           zip -r ../deploy-package.zip .
