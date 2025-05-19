@@ -44,7 +44,6 @@ jobs:
           cp -r ./capstone1/.platform deploy/
           cd deploy
           zip -r ../deploy-package.zip .
-          
 
       - name: Beanstalk Deploy
         uses: einaregilsson/beanstalk-deploy@v20
