@@ -41,7 +41,7 @@ jobs:
           mkdir -p deploy
           JAR_PATH=$(ls ./capstone1/build/libs/*.jar | head -n 1)
           cp "$JAR_PATH" deploy/application.jar
-          cp ./capstone1/Procfile deploy/
+          cp -r ./capstone1/.platform deploy/
           cd deploy
           zip -r ../deploy-package.zip .
 
