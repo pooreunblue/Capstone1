@@ -2,24 +2,18 @@ package org.vox.capstonedesign1.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.vox.capstonedesign1.domain.Agent;
-import org.vox.capstonedesign1.domain.AgentSignal;
 import org.vox.capstonedesign1.domain.Squad;
 import org.vox.capstonedesign1.dto.AgentViewResponse;
 import org.vox.capstonedesign1.dto.SquadViewResponse;
 import org.vox.capstonedesign1.service.AgentService;
-import org.vox.capstonedesign1.service.AgentSignalService;
 import org.vox.capstonedesign1.service.SquadService;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 @Slf4j
 @Controller
