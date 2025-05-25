@@ -11,7 +11,7 @@ public class AgentViewResponse {
 
     private final String agentName;
     private final String estimatedStatus;
-    private final double deviceSerialNumber;
+    private final String deviceSerialNumber;
     private final LocalDateTime timeStamp;
     private final double streamingFrequency;
 

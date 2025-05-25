@@ -61,7 +61,7 @@ public class AgentSignalService {
 //    }
 
     private Agent fetchAgentBySerialNumber(AgentSignalRequest request) {
-        double deviceSerialNumber = request.getDeviceSerialNumber();
+        String deviceSerialNumber = request.getDeviceSerialNumber();
         return agentRepository.findByDevice_DeviceSerialNumber(deviceSerialNumber)
                 .orElseThrow(() -> new RuntimeException("디바이스 일련번호 " + deviceSerialNumber + "의 요원은 존재하지 않음"));
     }

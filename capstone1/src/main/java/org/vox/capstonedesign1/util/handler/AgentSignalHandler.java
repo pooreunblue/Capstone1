@@ -36,13 +36,13 @@ public class AgentSignalHandler implements UdpMessageHandler {
     @Override
     public void handleMessage(byte[] data){
         float[] floats = getFloats(data);
-        double deviceSerialNumber = getDeviceSerialNumber(floats);
+        String deviceSerialNumber = getDeviceSerialNumber(floats);
         saveSignal(floats, deviceSerialNumber);
         // WebSocket 전송 (raw 데이터 그대로)
         unityWebSocketManager.sendToDevice(deviceSerialNumber, data);
     }
 
-    private void saveSignal(float[] floats, double deviceSerialNumber) {
+    private void saveSignal(float[] floats, String deviceSerialNumber) {
         Long statusId = (long) floats[0];
         float timestamp = floats[2];
         long seconds = (long) timestamp;
@@ -63,9 +63,9 @@ public class AgentSignalHandler implements UdpMessageHandler {
         agentSignalService.saveSignal(request);
     }
 
-    private double getDeviceSerialNumber(float[] floats) {
+    private String getDeviceSerialNumber(float[] floats) {
         Long deviceId = (long) floats[1];
-        double deviceSerialNumber = deviceService.resolveDeviceSerialNumber(deviceId);
+        String deviceSerialNumber = deviceService.resolveDeviceSerialNumber(deviceId);
         return deviceSerialNumber;
     }
 

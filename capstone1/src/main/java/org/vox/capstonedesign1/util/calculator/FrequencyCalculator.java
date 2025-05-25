@@ -8,11 +8,11 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class FrequencyCalculator {
 
-    private final Map<Double, Double> lastTimestamps = new ConcurrentHashMap<>();
+    private final Map<String, Double> lastTimestamps = new ConcurrentHashMap<>();
 
     private double frequency = 0.0;
 
-    public double calculateFrequency(double deviceSerialNumber, double currentTimestamp) {
+    public double calculateFrequency(String deviceSerialNumber, double currentTimestamp) {
         Double previousTimestamp = lastTimestamps.get(deviceSerialNumber);
         if (previousTimestamp == null) {
             return frequency;
