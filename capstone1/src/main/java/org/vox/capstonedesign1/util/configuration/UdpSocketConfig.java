@@ -1,4 +1,4 @@
-package org.vox.capstonedesign1.service;
+package org.vox.capstonedesign1.util.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
