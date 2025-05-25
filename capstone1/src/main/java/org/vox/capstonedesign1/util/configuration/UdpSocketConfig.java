@@ -13,6 +13,6 @@ public class UdpSocketConfig {
 
     @Bean
     public DatagramSocket datagramSocket() throws SocketException, UnknownHostException {
-        return new DatagramSocket(9998, InetAddress.getByName("0.0.0.0"));
+        return new DatagramSocket(9999, InetAddress.getByName("0.0.0.0"));
     }
 }
