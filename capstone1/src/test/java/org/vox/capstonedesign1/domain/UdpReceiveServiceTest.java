@@ -8,7 +8,7 @@ import java.net.DatagramPacket;
 
 import static org.mockito.Mockito.*;
 
-class UdpReceiverTest {
+class UdpReceiveServiceTest {
 
     @Test
     void UDP메시지_Handler에_전달하는지_테스트() throws Exception {

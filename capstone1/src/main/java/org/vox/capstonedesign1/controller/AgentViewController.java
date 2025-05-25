@@ -37,16 +37,4 @@ public class AgentViewController {
         model.addAttribute("statuses", statuses);
         return "squadDetail";
     }
-
-//    /**
-//     * [GET] /main/squads/{squadId}/agent/{agentId}
-//     * 특정 요원의 최신 상태 조회
-//     */
-//    @GetMapping("/{id}/agents/{agentId}")
-//    public ResponseEntity<AgentViewResponse> getAgentStatus(@PathVariable Long id, @PathVariable Long agentId, Model model) {
-//        String deviceSerialNumber = agentService.getDeviceSerialNumberBySquadIdAndId(id, agentId);
-//        AgentViewResponse agentStatus = agentSignalService.getLatestSignalByDeviceSerialNumber(deviceSerialNumber);
-//        model.addAttribute("agentStatus", agentStatus);
-//        return ResponseEntity.ok(agentStatus);
-//    }
 }

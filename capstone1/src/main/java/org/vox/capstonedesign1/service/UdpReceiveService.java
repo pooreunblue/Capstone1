@@ -1,4 +1,4 @@
-package org.vox.capstonedesign1.domain;
+package org.vox.capstonedesign1.service;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -6,45 +6,37 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.vox.capstonedesign1.util.handler.AgentSignalHandler;
 
+import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
+import java.util.Arrays;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class UdpReceiver {
+public class UdpReceiveService {
 
     private final DatagramSocket datagramSocket;
     private final AgentSignalHandler messageHandler;
 
     @PostConstruct
     public void start() {
-        Thread thread = new Thread(this::listen);
+        Thread thread = new Thread(this::startUdpServer);
         thread.setDaemon(true);
         thread.start();
     }
 
-    private void listen() {
+    public void startUdpServer(){
         log.info("UDP 서버 시작됨. 포트: {}", datagramSocket.getLocalPort());
         byte[] buffer = new byte[16834];
-
         while (!datagramSocket.isClosed()) {
             try {
                 DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
                 datagramSocket.receive(packet);
-                // ▷ 바이너리 float[] 해석
-                ByteBuffer byteBuffer = ByteBuffer.wrap(packet.getData(), 0, packet.getLength());
-                byteBuffer.order(ByteOrder.LITTLE_ENDIAN); // Python 쪽과 byte 순서 맞추기
-                int numFloats = packet.getLength() / 4;
-                float[] data = new float[numFloats];
-                for (int i = 0; i < numFloats; i++) {
-                    data[i] = byteBuffer.getFloat();
-                }
-                log.info("수신된 UDP 데이터(float[]) 길이: {}", data.length);
-//                messageHandler.handleMessage(message);
-            } catch (Exception e) {
+                byte[] data = Arrays.copyOfRange(packet.getData(), 0, packet.getLength());
+                messageHandler.handleMessage(data);
+                log.info("수신된 UDP 데이터(float[]) 길이: {}", data.length / 4);
+            } catch (IOException e) {
                 log.error("UDP 수신 중 오류 발생", e);
             }
         }
