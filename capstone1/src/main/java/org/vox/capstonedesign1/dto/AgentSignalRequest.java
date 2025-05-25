@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class SaveAgentSignalRequest {
+public class AgentSignalRequest {
 
     private String deviceSerialNumber;
     private Long statusId;
@@ -14,7 +14,7 @@ public class SaveAgentSignalRequest {
     private double streamingFrequency;
 
     @Builder
-    public SaveAgentSignalRequest(String deviceSerialNumber, Long statusId, String timeStamp, double streamingFrequency) {
+    public AgentSignalRequest(String deviceSerialNumber, Long statusId, String timeStamp, double streamingFrequency) {
         this.deviceSerialNumber = deviceSerialNumber;
         this.statusId = statusId;
         this.timeStamp = timeStamp;
