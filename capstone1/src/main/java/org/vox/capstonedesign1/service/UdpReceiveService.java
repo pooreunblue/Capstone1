@@ -31,6 +31,13 @@ public class UdpReceiveService {
         byte[] buffer = new byte[16834];
         while (!datagramSocket.isClosed()) {
             try {
+                // ▷ 바이너리 float[] 해석
+//                ByteBuffer byteBuffer = ByteBuffer.wrap(packet.getData(), 0, packet.getLength());
+//                byteBuffer.order(ByteOrder.LITTLE_ENDIAN); // Python 쪽과 byte 순서 맞추기
+//                float[] data = new float[packet.getLength() / 4];
+//                for (int i = 0; i < data.length; i++) {
+//                    data[i] = byteBuffer.getFloat();
+//                }
                 DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
                 datagramSocket.receive(packet);
                 byte[] data = Arrays.copyOfRange(packet.getData(), 0, packet.getLength());

@@ -15,6 +15,7 @@ jobs:
       - name: Build with Gradle
         run: |
           cd capstone1
+          chmod +x gradlew
           ./gradlew clean build
 
       - name: Copy jar to EC2
@@ -26,11 +27,20 @@ jobs:
           source: "capstone1/build/libs/capstone1-1.0.jar"
           target: "/home/ec2-user/"
 
-      - name: Restart systemd service
+      - name: Kill existing java process and restart manually
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ec2-user
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            sudo systemctl restart myapp
+            # 기존 실행 중인 Java 프로세스 종료
+            PID=$(pgrep -f 'capstone1-1.0.jar')
+            if [ -n "$PID" ]; then
+              echo "Killing existing Java process: $PID"
+              kill -9 $PID
+            fi
+              
+            # 백그라운드로 새 JAR 실행
+            nohup java -Djava.net.preferIPv4Stack=true -jar /home/ec2-user/capstone1-1.0.jar > /home/ec2-user/app.log 2>&1 &
+            echo "Application restarted in background."
