@@ -8,13 +8,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AgentSignalRequest {
 
-    private String deviceSerialNumber;
+    private double deviceSerialNumber;
     private Long statusId;
     private String timeStamp;
     private double streamingFrequency;
 
     @Builder
-    public AgentSignalRequest(String deviceSerialNumber, Long statusId, String timeStamp, double streamingFrequency) {
+    public AgentSignalRequest(double deviceSerialNumber, Long statusId, String timeStamp, double streamingFrequency) {
         this.deviceSerialNumber = deviceSerialNumber;
         this.statusId = statusId;
         this.timeStamp = timeStamp;

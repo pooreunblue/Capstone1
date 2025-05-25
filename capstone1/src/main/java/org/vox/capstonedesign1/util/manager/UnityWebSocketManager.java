@@ -26,7 +26,7 @@ public class UnityWebSocketManager {
         deviceSessions.remove(deviceSerialNumber);
     }
 
-    public void sendToDevice(String deviceSerialNumber, byte[] rawData) {
+    public void sendToDevice(double deviceSerialNumber, byte[] rawData) {
         WebSocketSession session = deviceSessions.get(deviceSerialNumber);
         if (session != null && session.isOpen()) {
             try {

@@ -34,7 +34,7 @@ public class AgentService {
                 .toList();
     }
 
-    public String getDeviceSerialNumberBySquadIdAndId(Long squadId, Long agentId) {
+    public double getDeviceSerialNumberBySquadIdAndId(Long squadId, Long agentId) {
         Agent agent = agentRepository.findBySquad_IdAndId(squadId, agentId)
                 .orElseThrow(() -> new IllegalArgumentException("소대" + squadId + "에 요원" + agentId + "가 존재하지 않습니다."));
         return agent.getDevice().getDeviceSerialNumber();

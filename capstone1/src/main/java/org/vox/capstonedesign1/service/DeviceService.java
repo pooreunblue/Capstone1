@@ -13,9 +13,9 @@ public class DeviceService {
 
     private final DeviceRepository deviceRepository;
 
-    public String resolveDeviceSerialNumber(Long deviceId) {
+    public double resolveDeviceSerialNumber(long deviceId) {
         Optional<Device> device = deviceRepository.findById(deviceId);
         return device.map(Device::getDeviceSerialNumber)
-                .orElse("존재하지 않는 디바이스 일련번호");
+                .orElse(-1.0);
     }
 }

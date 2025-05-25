@@ -19,5 +19,5 @@ public class Device {
     private String deviceName;
 
     @Column(name = "device_serial_number", nullable = false, unique = true)
-    private String deviceSerialNumber;
+    private double deviceSerialNumber;
 }

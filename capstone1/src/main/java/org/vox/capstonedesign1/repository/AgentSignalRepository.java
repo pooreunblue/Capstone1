@@ -7,6 +7,6 @@ import org.vox.capstonedesign1.domain.AgentSignal;
 import java.util.Optional;
 
 public interface AgentSignalRepository extends JpaRepository<AgentSignal, Long> {
-    Optional<AgentSignal> findTopByDevice_DeviceSerialNumberOrderByTimeStampDesc(String deviceSerialNumber);
+    Optional<AgentSignal> findTopByDevice_DeviceSerialNumberOrderByTimeStampDesc(double deviceSerialNumber);
     Optional<AgentSignal> findTopByAgentOrderByTimeStampDesc(Agent agent);
 }
