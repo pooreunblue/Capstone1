@@ -6,39 +6,45 @@ import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.BinaryWebSocketHandler;
-import org.springframework.web.util.UriComponentsBuilder;
-import org.vox.capstonedesign1.util.manager.UnityWebSocketManager;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 @RequiredArgsConstructor
 public class UnityWebSocketHandler extends BinaryWebSocketHandler {
 
-    private final UnityWebSocketManager manager;
+    private final Map<String, WebSocketSession> deviceSessions = new ConcurrentHashMap<>();
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
-        String uri = session.getUri().toString();
-        String deviceSerialNumber = UriComponentsBuilder.fromUriString(uri).build().getQueryParams().getFirst("deviceSerialNumber");
+        String deviceSerialNumber = getDeviceSerialFromQuery(session.getUri().toString());
         if (deviceSerialNumber != null) {
-            manager.registerSession(deviceSerialNumber, session);
+            deviceSessions.put(deviceSerialNumber, session);
+            System.out.println("WebSocket 연결됨: " + deviceSerialNumber);
         }
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
-        // 연결 종료 시 등록 해제
-        for (Map.Entry<String, WebSocketSession> entry : manager.getDeviceSessions().entrySet()) {
-            if (entry.getValue().equals(session)) {
-                manager.removeSession(entry.getKey());
-                break;
+        deviceSessions.entrySet().removeIf(entry -> entry.getValue().equals(session));
+    }
+
+    public void sendToDevice(String deviceSerialNumber, byte[] data) {
+        WebSocketSession session = deviceSessions.get(deviceSerialNumber);
+        if (session != null && session.isOpen()) {
+            try {
+                session.sendMessage(new BinaryMessage(data));
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
 
-    @Override
-    public void handleBinaryMessage(WebSocketSession session, BinaryMessage message) {
-        // Unity에서는 일반적으로 수신만 하므로 처리 생략
+    private String getDeviceSerialFromQuery(String uri) {
+        if (uri.contains("deviceSerialNumber=")) {
+            return uri.split("deviceSerialNumber=")[1];
+        }
+        return null;
     }
 }

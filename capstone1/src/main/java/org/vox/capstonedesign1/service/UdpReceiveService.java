@@ -17,7 +17,7 @@ import java.util.Arrays;
 public class UdpReceiveService {
 
     private final DatagramSocket datagramSocket;
-    private final AgentSignalHandler messageHandler;
+    private final AgentSignalHandler agentSignalHandler;
 
     @PostConstruct
     public void start() {
@@ -41,7 +41,7 @@ public class UdpReceiveService {
                 DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
                 datagramSocket.receive(packet);
                 byte[] data = Arrays.copyOfRange(packet.getData(), 0, packet.getLength());
-                // messageHandler.handleMessage(data);
+                agentSignalHandler.handleMessage(data);
                 log.info("수신된 UDP 데이터(float[]) 길이: {}", data.length / 4);
             } catch (IOException e) {
                 log.error("UDP 수신 중 오류 발생", e);

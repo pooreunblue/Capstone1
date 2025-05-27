@@ -12,10 +12,10 @@ import org.vox.capstonedesign1.util.handler.UnityWebSocketHandler;
 @RequiredArgsConstructor
 public class WebSocketConfig implements WebSocketConfigurer {
 
-    private final UnityWebSocketHandler handler;
+    private final UnityWebSocketHandler unityWebSocketHandler;
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(handler, "/ws/unity").setAllowedOrigins("*");
+        registry.addHandler(unityWebSocketHandler, "/ws/unity").setAllowedOrigins("*");
     }
 }

@@ -7,7 +7,6 @@ import org.vox.capstonedesign1.dto.AgentSignalRequest;
 import org.vox.capstonedesign1.service.AgentSignalService;
 import org.vox.capstonedesign1.service.DeviceService;
 import org.vox.capstonedesign1.util.calculator.FrequencyCalculator;
-import org.vox.capstonedesign1.util.manager.UnityWebSocketManager;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -24,14 +23,8 @@ public class AgentSignalHandler implements UdpMessageHandler {
 
     private final AgentSignalService agentSignalService;
     private final DeviceService deviceService;
-    private final UnityWebSocketManager unityWebSocketManager;
+    private final UnityWebSocketHandler unityWebSocketHandler;
     private final FrequencyCalculator frequencyCalculator;
-
-//    @Override
-//    public void handleMessage(String message) throws Exception {
-//        SaveAgentSignalRequest dto = objectMapper.readValue(message, SaveAgentSignalRequest.class);
-//        agentSignalService.saveSignal(dto);
-//    }
 
     @Override
     public void handleMessage(byte[] data){
@@ -39,7 +32,7 @@ public class AgentSignalHandler implements UdpMessageHandler {
         String deviceSerialNumber = getDeviceSerialNumber(floats);
         saveSignal(floats, deviceSerialNumber);
         // WebSocket 전송 (raw 데이터 그대로)
-        unityWebSocketManager.sendToDevice(deviceSerialNumber, data);
+        unityWebSocketHandler.sendToDevice(deviceSerialNumber, data);
     }
 
     private void saveSignal(float[] floats, String deviceSerialNumber) {
