@@ -30,7 +30,7 @@ public class AgentSignalHandler implements UdpMessageHandler {
     public void handleMessage(byte[] data){
         float[] floats = getFloats(data);
         String deviceSerialNumber = getDeviceSerialNumber(floats);
-        saveSignal(floats, deviceSerialNumber);
+        // saveSignal(floats, deviceSerialNumber);
         // WebSocket 전송 (raw 데이터 그대로)
         unityWebSocketHandler.sendToDevice(deviceSerialNumber, data);
     }
