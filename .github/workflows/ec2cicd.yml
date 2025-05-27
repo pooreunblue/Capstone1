@@ -35,11 +35,12 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             # 기존 실행 중인 Java 프로세스 종료
-            PID=$(pgrep -f 'capstone1-1.0.jar')
+            PID=$(pgrep -f "capstone1-1.0.jar")
             if [ -n "$PID" ]; then
               echo "Killing existing Java process: $PID"
               kill -9 $PID
             fi
+            sleep 3
               
             # 백그라운드로 새 JAR 실행
             nohup java -Djava.net.preferIPv4Stack=true -jar /home/ec2-user/capstone1-1.0.jar > /home/ec2-user/app.log 2>&1 &
