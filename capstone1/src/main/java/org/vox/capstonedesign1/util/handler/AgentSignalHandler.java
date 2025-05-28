@@ -15,6 +15,11 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import static java.util.stream.StreamSupport.stream;
 
 @Slf4j
 @Component
@@ -31,8 +36,35 @@ public class AgentSignalHandler implements UdpMessageHandler {
         float[] floats = getFloats(data);
         String deviceSerialNumber = getDeviceSerialNumber(floats);
         // saveSignal(floats, deviceSerialNumber);
-        // WebSocket 전송 (raw 데이터 그대로)
-        unityWebSocketHandler.sendToDevice(deviceSerialNumber, data);
+        float[] numbers = extractData(floats);
+        String message = formatToString(numbers);
+        unityWebSocketHandler.sendTextToDevice(deviceSerialNumber, message);
+    }
+
+    private float[] getFloats(byte[] data) {
+        FloatBuffer floatBuffer = ByteBuffer.wrap(data)
+                .order(ByteOrder.LITTLE_ENDIAN)
+                .asFloatBuffer();
+        float[] floats = new float[floatBuffer.remaining()];
+        floatBuffer.get(floats);
+        return floats;
+    }
+
+    private String getDeviceSerialNumber(float[] floats) {
+        Long deviceId = (long) floats[1];
+        String deviceSerialNumber = deviceService.resolveDeviceSerialNumber(deviceId);
+        return deviceSerialNumber;
+    }
+
+    private float[] extractData (float[] floats) {
+        return Arrays.copyOfRange(floats, 3, floats.length);
+    }
+
+    private String formatToString (float[] floats) {
+        String message = IntStream.range(0, floats.length)
+                .mapToObj(i -> Float.toString(floats[i]))
+                .collect(Collectors.joining(","));
+        return message;
     }
 
     private void saveSignal(float[] floats, String deviceSerialNumber) {
@@ -54,20 +86,5 @@ public class AgentSignalHandler implements UdpMessageHandler {
                 .build();
         // DB 저장
         agentSignalService.saveSignal(request);
-    }
-
-    private String getDeviceSerialNumber(float[] floats) {
-        Long deviceId = (long) floats[1];
-        String deviceSerialNumber = deviceService.resolveDeviceSerialNumber(deviceId);
-        return deviceSerialNumber;
-    }
-
-    private float[] getFloats(byte[] data) {
-        FloatBuffer floatBuffer = ByteBuffer.wrap(data)
-                .order(ByteOrder.LITTLE_ENDIAN)
-                .asFloatBuffer();
-        float[] floats = new float[floatBuffer.remaining()];
-        floatBuffer.get(floats);
-        return floats;
     }
 }

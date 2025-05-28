@@ -2,8 +2,8 @@ package org.vox.capstonedesign1.util.handler;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.CloseStatus;
+import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.BinaryWebSocketHandler;
 
@@ -30,11 +30,11 @@ public class UnityWebSocketHandler extends BinaryWebSocketHandler {
         deviceSessions.entrySet().removeIf(entry -> entry.getValue().equals(session));
     }
 
-    public void sendToDevice(String deviceSerialNumber, byte[] data) {
+    public void sendTextToDevice(String deviceSerialNumber, String message) {
         WebSocketSession session = deviceSessions.get(deviceSerialNumber);
         if (session != null && session.isOpen()) {
             try {
-                session.sendMessage(new BinaryMessage(data));
+                session.sendMessage(new TextMessage(message));
             } catch (Exception e) {
                 e.printStackTrace();
             }
