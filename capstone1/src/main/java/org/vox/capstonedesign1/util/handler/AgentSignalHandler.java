@@ -60,13 +60,13 @@ public class AgentSignalHandler implements UdpMessageHandler {
         int index = 0;
         try {
             // 필요한 인덱스 순서대로 추출
-            float[] hand_q = {floats[52], floats[53], floats[54], floats[51]};
-            float[] hand_p = {floats[7], floats[8], floats[9]};
-            float[] larm_q = {floats[12], floats[13], floats[14], floats[11]};
-            float[] larm_p = {floats[15], floats[16], floats[17]};
-            float[] uarm_q = {floats[30], floats[31], floats[32], floats[29]};
-            float[] uarm_p = {floats[33], floats[34], floats[35]};
-            float[] hips_q = {floats[38], floats[39], floats[40], floats[37]};
+            float[] hand_q = {floats[50], floats[51], floats[52], floats[49]};
+            float[] hand_p = {floats[5], floats[6], floats[7]};
+            float[] larm_q = {floats[10], floats[11], floats[12], floats[9]};
+            float[] larm_p = {floats[13], floats[14], floats[15]};
+            float[] uarm_q = {floats[28], floats[29], floats[30], floats[27]};
+            float[] uarm_p = {floats[31], floats[32], floats[33]};
+            float[] hips_q = {floats[36], floats[37], floats[38], floats[35]};
             // 총 3 + 3 + 3 + 3 + 4 + 4 = 24개
             float[] result = new float[
                     hand_q.length + hand_p.length +

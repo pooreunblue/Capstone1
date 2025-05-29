@@ -25,4 +25,8 @@ spring:
     open-in-view: false
 
 server:
-  port: 8080
+  port: 80
+  error:
+    include-message: always
+    include-binding-errors: always
+    include-exception: true
