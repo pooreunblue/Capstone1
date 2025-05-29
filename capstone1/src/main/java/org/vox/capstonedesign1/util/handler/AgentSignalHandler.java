@@ -57,19 +57,16 @@ public class AgentSignalHandler implements UdpMessageHandler {
     }
 
     private float[] extractPoseData(float[] floats) {
+        int index = 0;
         try {
             // 필요한 인덱스 순서대로 추출
             float[] hand_q = {floats[52], floats[53], floats[54], floats[51]};
             float[] hand_p = {floats[7], floats[8], floats[9]};
-
             float[] larm_q = {floats[12], floats[13], floats[14], floats[11]};
             float[] larm_p = {floats[15], floats[16], floats[17]};
-
             float[] uarm_q = {floats[30], floats[31], floats[32], floats[29]};
             float[] uarm_p = {floats[33], floats[34], floats[35]};
-
             float[] hips_q = {floats[38], floats[39], floats[40], floats[37]};
-
             // 총 3 + 3 + 3 + 3 + 4 + 4 = 24개
             float[] result = new float[
                     hand_q.length + hand_p.length +
@@ -77,21 +74,14 @@ public class AgentSignalHandler implements UdpMessageHandler {
                             uarm_q.length + uarm_p.length +
                             hips_q.length
                     ];
-
-            int index = 0;
             for (float v : hand_q) result[index++] = v;
             for (float v : hand_p) result[index++] = v;
-
             for (float v : larm_q) result[index++] = v;
             for (float v : larm_p) result[index++] = v;
-
             for (float v : uarm_q) result[index++] = v;
             for (float v : uarm_p) result[index++] = v;
-
             for (float v : hips_q) result[index++] = v;
-
             return result;
-
         } catch (IndexOutOfBoundsException e) {
             log.error("Pose data extraction failed: index out of bounds. floats.length={}", floats.length, e);
             return new float[0]; // 빈 배열 반환
