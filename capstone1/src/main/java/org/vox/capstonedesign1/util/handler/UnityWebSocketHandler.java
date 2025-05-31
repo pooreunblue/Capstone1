@@ -28,6 +28,7 @@ public class UnityWebSocketHandler extends BinaryWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
         deviceSessions.entrySet().removeIf(entry -> entry.getValue().equals(session));
+        System.out.println("WebSocket 연결 종료됨: " + session.getId());
     }
 
     public void sendTextToDevice(String deviceSerialNumber, String message) {

@@ -51,8 +51,9 @@ public class AgentSignalHandler implements UdpMessageHandler {
     }
 
     private String getDeviceSerialNumber(float[] floats) {
-        Long deviceId = (long) floats[1];
-        String deviceSerialNumber = deviceService.resolveDeviceSerialNumber(deviceId);
+//        Long deviceId = (long) floats[1];
+//        String deviceSerialNumber = deviceService.resolveDeviceSerialNumber(deviceId);
+        String deviceSerialNumber = "abc123";
         return deviceSerialNumber;
     }
 
