@@ -41,7 +41,7 @@ jobs:
               kill -9 $PID
             fi
             sleep 3
-              
             # 백그라운드로 새 JAR 실행
+            echo "Starting new application..."
             nohup java -Djava.net.preferIPv4Stack=true -jar /home/ec2-user/capstone1-1.0.jar > /home/ec2-user/app.log 2>&1 &
             echo "Application restarted in background."
