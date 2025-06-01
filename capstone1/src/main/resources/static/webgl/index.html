@@ -118,5 +118,19 @@
       document.body.appendChild(script);
 
     </script>
+    <script>
+      document.addEventListener('click', function () {
+        if (typeof unityInstance !== 'undefined') {
+          const ac = unityInstance.Module?.audioContext;
+          if (ac && ac.state === 'suspended') {
+            ac.resume().then(() => {
+              console.log('✅ AudioContext resumed on user gesture');
+            }).catch((err) => {
+              console.warn('⚠️ AudioContext resume failed:', err);
+            });
+          }
+        }
+      }, { once: true });
+    </script>
   </body>
 </html>
