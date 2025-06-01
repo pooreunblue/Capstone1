@@ -34,7 +34,8 @@ public class AgentSignalHandler implements UdpMessageHandler {
     @Override
     public void handleMessage(byte[] data){
         float[] floats = getFloats(data);
-        String deviceSerialNumber = getDeviceSerialNumber(floats);
+        String deviceSerialNumber = "abc123";
+        // String deviceSerialNumber = getDeviceSerialNumber(floats);
         // saveSignal(floats, deviceSerialNumber);
         float[] poses = extractPoseData(floats);
         String message = formatToString(poses);
@@ -51,9 +52,8 @@ public class AgentSignalHandler implements UdpMessageHandler {
     }
 
     private String getDeviceSerialNumber(float[] floats) {
-//        Long deviceId = (long) floats[1];
-//        String deviceSerialNumber = deviceService.resolveDeviceSerialNumber(deviceId);
-        String deviceSerialNumber = "abc123";
+        Long deviceId = (long) floats[1];
+        String deviceSerialNumber = deviceService.resolveDeviceSerialNumber(deviceId);
         return deviceSerialNumber;
     }
 
