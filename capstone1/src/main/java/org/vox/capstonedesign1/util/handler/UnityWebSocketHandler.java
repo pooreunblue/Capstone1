@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
-import org.springframework.web.socket.handler.BinaryWebSocketHandler;
+import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class UnityWebSocketHandler extends BinaryWebSocketHandler {
+public class UnityWebSocketHandler extends TextWebSocketHandler {
 
     private final Map<String, WebSocketSession> deviceSessions = new ConcurrentHashMap<>();
 
