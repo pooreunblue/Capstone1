@@ -1,6 +1,7 @@
 package org.vox.capstonedesign1.util.handler;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -10,6 +11,7 @@ import org.springframework.web.socket.handler.BinaryWebSocketHandler;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class UnityWebSocketHandler extends BinaryWebSocketHandler {
@@ -21,14 +23,14 @@ public class UnityWebSocketHandler extends BinaryWebSocketHandler {
         String deviceSerialNumber = getDeviceSerialFromQuery(session.getUri().toString());
         if (deviceSerialNumber != null) {
             deviceSessions.put(deviceSerialNumber, session);
-            System.out.println("WebSocket 연결됨: " + deviceSerialNumber);
+            log.info("WebSocket 연결됨: {}", deviceSerialNumber);
         }
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
         deviceSessions.entrySet().removeIf(entry -> entry.getValue().equals(session));
-        System.out.println("WebSocket 연결 종료됨: " + session.getId());
+        log.info("WebSocket 연결 종료됨: {}", session.getId());
     }
 
     public void sendTextToDevice(String deviceSerialNumber, String message) {
