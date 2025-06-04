@@ -5,3 +5,6 @@
 !.elasticbeanstalk/*.global.yml
 !capstone1/.ebextensions/
 !capstone1/.ebextensions/*
+
+/src/main/resources/static/webgl/Build/
+
