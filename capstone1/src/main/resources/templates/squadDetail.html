@@ -67,7 +67,21 @@
 <div class="container">
     <!-- AGENT CARDS -->
     <div class="agent-grid">
-        <div class="agent-card" th:each="agent : ${statuses}">
+        <div class="agent-card"
+             th:each="agent : ${statuses}"
+             th:if="${squad.id == 1}"
+             th:onclick="'location.href=\'/main/squads/' + ${squad.id} + '/agents/' + ${agent.agentName} + '\''"
+             style="cursor: pointer;">
+            <h3 th:text="${agent.agentName}">Agent</h3>
+            <p th:classappend="'status-' + ${agent.estimatedStatus}"
+               th:text="${agent.estimatedStatus}">Status</p>
+            <p th:text="${agent.deviceSerialNumber}">Device</p>
+            <!-- iframe 생략 -->
+        </div>
+
+        <div class="agent-card"
+             th:each="agent : ${statuses}"
+             th:unless="${squad.id == 1}">
             <h3 th:text="${agent.agentName}">Agent</h3>
             <p th:classappend="'status-' + ${agent.estimatedStatus}"
                th:text="${agent.estimatedStatus}">Status</p>

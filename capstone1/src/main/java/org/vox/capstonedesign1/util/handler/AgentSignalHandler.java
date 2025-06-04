@@ -32,78 +32,25 @@ public class AgentSignalHandler implements UdpMessageHandler {
     private final FrequencyCalculator frequencyCalculator;
 
     @Override
-    public void handleMessage(byte[] data){
-        float[] floats = getFloats(data);
-        String deviceSerialNumber = "abc123";
-        // String deviceSerialNumber = getDeviceSerialNumber(floats);
-        // saveSignal(floats, deviceSerialNumber);
-        float[] poses = extractPoseData(floats);
-        String message = formatToString(poses);
-        unityWebSocketHandler.sendTextToDevice(deviceSerialNumber, message);
+    public void handleMessage(byte[] data) {
+        ByteBuffer buffer = extractInformation(data);
+        saveSignal(buffer);
     }
 
-    private float[] getFloats(byte[] data) {
-        FloatBuffer floatBuffer = ByteBuffer.wrap(data)
-                .order(ByteOrder.LITTLE_ENDIAN)
-                .asFloatBuffer();
-        float[] floats = new float[floatBuffer.remaining()];
-        floatBuffer.get(floats);
-        return floats;
+    private ByteBuffer extractInformation(byte[] data) {
+        return ByteBuffer.wrap(data);
     }
 
-    private String getDeviceSerialNumber(float[] floats) {
-        Long deviceId = (long) floats[1];
-        String deviceSerialNumber = deviceService.resolveDeviceSerialNumber(deviceId);
-        return deviceSerialNumber;
-    }
-
-    private float[] extractPoseData(float[] floats) {
-        int index = 0;
-        try {
-            // 필요한 인덱스 순서대로 추출
-            float[] hand_q = {floats[50], floats[51], floats[52], floats[49]};
-            float[] hand_p = {floats[5], floats[6], floats[7]};
-            float[] larm_q = {floats[10], floats[11], floats[12], floats[9]};
-            float[] larm_p = {floats[13], floats[14], floats[15]};
-            float[] uarm_q = {floats[28], floats[29], floats[30], floats[27]};
-            float[] uarm_p = {floats[31], floats[32], floats[33]};
-            float[] hips_q = {floats[36], floats[37], floats[38], floats[35]};
-            // 총 3 + 3 + 3 + 3 + 4 + 4 = 24개
-            float[] result = new float[
-                    hand_q.length + hand_p.length +
-                            larm_q.length + larm_p.length +
-                            uarm_q.length + uarm_p.length +
-                            hips_q.length
-                    ];
-            for (float v : hand_q) result[index++] = v;
-            for (float v : hand_p) result[index++] = v;
-            for (float v : larm_q) result[index++] = v;
-            for (float v : larm_p) result[index++] = v;
-            for (float v : uarm_q) result[index++] = v;
-            for (float v : uarm_p) result[index++] = v;
-            for (float v : hips_q) result[index++] = v;
-            return result;
-        } catch (IndexOutOfBoundsException e) {
-            log.error("Pose data extraction failed: index out of bounds. floats.length={}", floats.length, e);
-            return new float[0]; // 빈 배열 반환
-        }
-    }
-
-    private String formatToString (float[] floats) {
-        String message = IntStream.range(0, floats.length)
-                .mapToObj(i -> Float.toString(floats[i]))
-                .collect(Collectors.joining(","));
-        return message;
-    }
-
-    private void saveSignal(float[] floats, String deviceSerialNumber) {
-        Long statusId = (long) floats[0];
-        float timestamp = floats[2];
+    private void saveSignal(ByteBuffer buffer) {
+        double timestamp = buffer.getDouble();
+        Long deviceId = (long) buffer.getInt();
+        Long statusId = (long) buffer.getInt();
         long seconds = (long) timestamp;
         long nanos = (long) ((timestamp % 1) * 1_000_000_000);  // 소수점 이하 나노초
         Instant instant = Instant.ofEpochSecond(seconds, nanos);
         LocalDateTime localTimestamp = instant.atZone(ZoneId.of("Asia/Seoul")).toLocalDateTime();
         String formattedTimestamp = localTimestamp.format(DateTimeFormatter.ISO_DATE_TIME);
+        String deviceSerialNumber = deviceService.resolveDeviceSerialNumber(deviceId);
         // frequency 계산
         double frequency = frequencyCalculator.calculateFrequency(deviceSerialNumber, timestamp);
         // 저장 요청 객체 생성
