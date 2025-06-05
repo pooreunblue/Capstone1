@@ -25,7 +25,7 @@ public class AgentViewController {
     private final AgentService agentService;
 
     /**
-     * [GET] /main/squads/{id}
+     * [GET] /squads/{id}
      * 특정 소대의 요원 전체 상태 조회
      */
     @GetMapping("/{id}")

@@ -18,7 +18,7 @@ public class SquadViewController {
     private final SquadService squadService;
 
     /**
-     * [GET] /main/squads
+     * [GET] /squads
      * 전체 소대 목록 조회
      */
     @GetMapping
