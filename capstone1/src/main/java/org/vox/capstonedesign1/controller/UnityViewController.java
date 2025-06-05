@@ -10,6 +10,6 @@ public class UnityViewController {
     @GetMapping("/unity-view/{deviceSerialNumber}")
     public String renderUnityView(@PathVariable String deviceSerialNumber, Model model) {
         model.addAttribute("deviceSerialNumber", deviceSerialNumber);
-        return "unity-view"; // Unity WebGL iframe 페이지 (예: templates/unity-view.html)
+        return "unity-view";
     }
 }
