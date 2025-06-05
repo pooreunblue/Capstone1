@@ -74,7 +74,7 @@
 <body>
 <!-- 로고 링크 -->
 <div class="header">
-    <a href="/main" class="logo-container">
+    <a href="/" class="logo-container">
         <img src="https://i.ibb.co/YBDLXjzs/vox.jpg" alt="voxlogo" class="voxlogo">
     </a>
 </div>
@@ -84,7 +84,7 @@
     <div class="squad-selection">
         <!-- 동적 반복 -->
         <div th:each="squad : ${squads}">
-            <a th:href="@{/main/squads/{id}(id=${squad.id})}" class="squad-card">
+            <a th:href="@{/squads/{id}(id=${squad.id})}" class="squad-card">
                 <div class="card-content">
                     <h2 th:text="${squad.squadName}">소대 이름</h2>
                 </div>

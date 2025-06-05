@@ -56,7 +56,7 @@
 </head>
 <body>
 <div class="header">
-    <a href="/main" class="logo-container">
+    <a href="/" class="logo-container">
         <img src="https://i.ibb.co/YBDLXjzs/vox.jpg" alt="voxlogo" class="voxlogo">
     </a>
 </div>
@@ -70,7 +70,7 @@
         <div class="agent-card"
              th:each="agent : ${statuses}"
              th:if="${squad.id == 1}"
-             th:onclick="'location.href=\'/main/squads/' + ${squad.id} + '/' + ${agent.deviceSerialNumber} + '/hls\''"
+             th:onclick="'location.href=\'/squads/' + ${squad.id} + '/' + ${agent.deviceSerialNumber} + '/hls\''"
              style="cursor: pointer;">
             <h3 th:text="${agent.agentName}">Agent</h3>
             <p th:classappend="'status-' + ${agent.estimatedStatus}"

@@ -12,7 +12,7 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/main/squads")
+@RequestMapping("/squads")
 public class SquadViewController {
 
     private final SquadService squadService;

@@ -18,7 +18,7 @@ import java.util.List;
 @Slf4j
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/main/squads")
+@RequestMapping("/squads")
 public class AgentViewController {
 
     private final SquadService squadService;

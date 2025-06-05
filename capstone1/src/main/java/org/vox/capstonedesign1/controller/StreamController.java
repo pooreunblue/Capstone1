@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class StreamController {
-    @GetMapping("/main/squads/{squadId}/{serial}/hls")
+    @GetMapping("/squads/{squadId}/{serial}/hls")
     public String hlsPlayer(@PathVariable Long squadId, @PathVariable String serial, Model model) {
         model.addAttribute("streamKey", serial);
         return "hlsPlayer";
