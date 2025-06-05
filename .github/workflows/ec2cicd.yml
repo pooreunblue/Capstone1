@@ -26,6 +26,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           source: "capstone1/build/libs/capstone1-1.0.jar"
           target: "/home/ec2-user/"
+          overwrite: true
 
       - name: Kill existing java process and restart manually
         uses: appleboy/ssh-action@master
