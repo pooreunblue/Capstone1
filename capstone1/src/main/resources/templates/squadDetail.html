@@ -70,7 +70,8 @@
         <div class="agent-card"
              th:each="agent : ${statuses}"
              th:if="${squad.id == 1}"
-             th:onclick="'location.href=\'/squads/' + ${squad.id} + '/' + ${agent.deviceSerialNumber} + '/hls\''"
+             th:attr="data-hlsurl='/squads/' + ${squad.id} + '/' + ${agent.deviceSerialNumber} + '/hls'"
+             onclick="goToHls(this)"
              style="cursor: pointer;">
             <h3 th:text="${agent.agentName}">Agent</h3>
             <p th:classappend="'status-' + ${agent.estimatedStatus}"
@@ -88,6 +89,12 @@
             <p th:text="${agent.deviceSerialNumber}">Device</p>
             <iframe th:src="@{'/unity-view/' + ${agent.deviceSerialNumber}}"></iframe>
         </div>
+        <script>
+            function goToHls(elem) {
+                const url = elem.getAttribute('data-hlsurl');
+                location.href = url;
+            }
+        </script>
     </div>
 
     <!-- INFO PANEL -->
