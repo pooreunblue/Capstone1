@@ -10,11 +10,7 @@
         .container { display: flex; flex-direction: row; justify-content: space-between; }
         .agent-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; width: 70%; }
         .agent-card { border: 1px solid #ddd; padding: 15px; border-radius: 10px; text-align: center; height: 350px; display: flex; flex-direction: column; justify-content: space-between; }
-        .agent-card iframe {
-            width: 100%;
-            height: 180px;
-            border: none;
-        }
+        .agent-card iframe { width: 100%; height: 180px; border: none; }
         .status-STABLE { color: green; font-weight: bold; font-size: 24px;}
         .status-SOS { color: red; font-weight: bold; font-size: 24px;}
         .status-NEED_BACKUP { color: darkblue; font-weight: bold; font-size: 24px;}
@@ -67,54 +63,118 @@
 <div class="container">
     <!-- AGENT CARDS -->
     <div class="agent-grid">
-        <div class="agent-card"
-             th:each="agent : ${statuses}"
-             th:if="${squad.id == 1}"
-             th:attr="data-hlsurl='/squads/' + ${squad.id} + '/' + ${agent.deviceSerialNumber} + '/hls'"
-             onclick="goToHls(this)"
-             style="cursor: pointer;">
-            <h3 th:text="${agent.agentName}">Agent</h3>
-            <p th:classappend="'status-' + ${agent.estimatedStatus}"
-               th:text="${agent.estimatedStatus}">Status</p>
-            <p th:text="${agent.deviceSerialNumber}">Device</p>
-            <!-- iframe 생략 -->
-        </div>
+<!--        <div class="agent-card"-->
+<!--             th:each="agent : ${statuses}"-->
+<!--             th:if="${squad.id == 1}"-->
+<!--             th:attr="data-hlsurl='/squads/' + ${squad.id} + '/' + ${agent.deviceSerialNumber} + '/hls'"-->
+<!--             onclick="goToHls(this)"-->
+<!--             style="cursor: pointer;">-->
+<!--            <h3 th:text="${agent.agentName}">Agent</h3>-->
+<!--            <p th:classappend="'status-' + ${agent.estimatedStatus}"-->
+<!--               th:text="${agent.estimatedStatus}">Status</p>-->
+<!--            <p th:text="${agent.deviceSerialNumber}">Device</p>-->
+<!--            &lt;!&ndash; iframe 생략 &ndash;&gt;-->
+<!--        </div>-->
 
-        <div class="agent-card"
-             th:each="agent : ${statuses}"
-             th:unless="${squad.id == 1}">
-            <h3 th:text="${agent.agentName}">Agent</h3>
-            <p th:classappend="'status-' + ${agent.estimatedStatus}"
-               th:text="${agent.estimatedStatus}">Status</p>
-            <p th:text="${agent.deviceSerialNumber}">Device</p>
-            <iframe th:src="@{'/unity-view/' + ${agent.deviceSerialNumber}}"></iframe>
-        </div>
-        <script>
-            function goToHls(elem) {
-                const url = elem.getAttribute('data-hlsurl');
-                location.href = url;
-            }
-        </script>
+<!--        <div class="agent-card"-->
+<!--             th:each="agent : ${statuses}"-->
+<!--             th:unless="${squad.id == 1}">-->
+<!--            <h3 th:text="${agent.agentName}">Agent</h3>-->
+<!--            <p th:classappend="'status-' + ${agent.estimatedStatus}"-->
+<!--               th:text="${agent.estimatedStatus}">Status</p>-->
+<!--            <p th:text="${agent.deviceSerialNumber}">Device</p>-->
+<!--            <iframe th:src="@{'/unity-view/' + ${agent.deviceSerialNumber}}"></iframe>-->
+<!--        </div>-->
+<!--        <script>-->
+<!--            function goToHls(elem) {-->
+<!--                const url = elem.getAttribute('data-hlsurl');-->
+<!--                location.href = url;-->
+<!--            }-->
+<!--        </script>-->
     </div>
 
     <!-- INFO PANEL -->
     <div class="info-panel">
         <div>
             <p><strong>IP:</strong> 3.38.247.200</p>
-            <div th:each="agent : ${statuses}">
-                <p th:text="${agent.agentName + ': ' + agent.streamingFrequency + 'Hz'}">Agent Info</p>
+            <div id="agent-info">
+<!--                <div th:each="agent : ${statuses}">-->
+<!--                    <p th:text="${agent.agentName + ': ' + agent.streamingFrequency + 'Hz'}">Agent Info</p>-->
+<!--                </div>-->
             </div>
         </div>
         <hr/>
         <div class="log-section">
             <h4>로그</h4>
-            <div class="log-box">
-                <div th:each="agent : ${statuses}">
-                    <span th:text="${#temporals.format(agent.timeStamp, 'yyyy-MM-dd HH:mm:ss ')} + ${agent.agentName} + ': ' + ${agent.estimatedStatus}"></span><br/>
-                </div>
+            <div class="log-box" id="log-box">
+<!--                <div th:each="agent : ${statuses}">-->
+<!--                    <span th:text="${#temporals.format(agent.timeStamp, 'yyyy-MM-dd HH:mm:ss ')} + ${agent.agentName} + ': ' + ${agent.estimatedStatus}"></span><br/>-->
+<!--                </div>-->
             </div>
         </div>
     </div>
 </div>
+<script th:inline="javascript">
+    const squadId = [[${squad.id}]];
+
+    // agent 상태 갱신
+    function updateAgentGrid() {
+        fetch(`/squads/${squadId}/agent-status`)
+            .then(res => res.json())
+            .then(data => {
+                // 각 agent-card에 agent 상태 반영
+                // data: [{agentName: ..., estimatedStatus: ..., deviceSerialNumber: ...}, ...]
+                document.querySelectorAll('.agent-card').forEach((card, idx) => {
+                    if (data[idx]) {
+                        card.querySelector('h3').innerText = data[idx].agentName;
+                        const statusElem = card.querySelector('p');
+                        statusElem.innerText = data[idx].estimatedStatus;
+                        statusElem.className = 'status-' + data[idx].estimatedStatus;
+                        card.querySelector('p:last-of-type').innerText = data[idx].deviceSerialNumber;
+                    }
+                });
+            });
+    }
+
+    // 로그 누적 갱신
+    let logSet = new Set();
+    function updateLogBox() {
+        fetch(`/squads/${squadId}/logs`)
+            .then(res => res.json())
+            .then(logs => {
+                let logBox = document.getElementById('log-box');
+                logs.forEach(log => {
+                    const logStr = `${log.timeStamp} ${log.agentName}: ${log.estimatedStatus}`;
+                    if (!logSet.has(logStr)) {
+                        logBox.innerHTML += `<div>${logStr}</div>`;
+                        logSet.add(logStr);
+                    }
+                });
+            });
+    }
+
+    function updateAgentInfo() {
+        fetch(`/squads/${squadId}/agent-status`)
+            .then(res => res.json())
+            .then(data => {
+                const infoDiv = document.getElementById('agent-info');
+                infoDiv.innerHTML = "";
+                data.forEach(agent => {
+                    infoDiv.innerHTML += `<p>${agent.agentName}: ${agent.streamingFrequency}Hz</p>`;
+                });
+            });
+    }
+
+    setInterval(() => {
+        updateAgentGrid();
+        updateLogBox();
+        updateAgentInfo();
+    }, 1000);
+
+    // 페이지 로딩시 최초 1회 호출
+    updateAgentGrid();
+    updateLogBox();
+    updateAgentInfo();
+</script>
 </body>
 </html>

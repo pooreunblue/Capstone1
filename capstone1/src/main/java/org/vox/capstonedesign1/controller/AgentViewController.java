@@ -7,7 +7,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.vox.capstonedesign1.domain.Squad;
+import org.vox.capstonedesign1.dto.AgentSignalLogResponse;
 import org.vox.capstonedesign1.dto.AgentViewResponse;
 import org.vox.capstonedesign1.dto.SquadViewResponse;
 import org.vox.capstonedesign1.service.AgentService;
@@ -36,5 +38,20 @@ public class AgentViewController {
         model.addAttribute("squad", squadViewResponse);
         model.addAttribute("statuses", statuses);
         return "squadDetail";
+    }
+
+    // 1초마다 요약 정보를 가져오는 REST API (JSON 반환)
+    @ResponseBody
+    @GetMapping("/{id}/agent-status")
+    public List<AgentViewResponse> getSquadAgentStatus(@PathVariable Long id) {
+        return agentService.getAgentStatusesBySquadId(id);
+    }
+
+    // 1초마다 로그 정보를 누적해서 가져오는 REST API (JSON 반환)
+    @ResponseBody
+    @GetMapping("/{id}/logs")
+    public List<AgentSignalLogResponse> getSquadLogs(@PathVariable Long id) {
+        // 최근 N건 누적 로그 가져오는 서비스 메소드 만들어서 호출
+        return agentService.getSquadAgentLogs(id); // 아래 AgentService 참고
     }
 }

@@ -23,4 +23,3 @@ public class SquadService {
         return squadRepository.findAll();
     }
 }
-
