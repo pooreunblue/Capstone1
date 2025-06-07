@@ -32,7 +32,7 @@ public class AgentViewController {
      */
     @GetMapping("/{squadId}")
     public String getAllAgentStatusInSquad(@PathVariable Long squadId, Model model) {
-        Squad squad = squadService.findById(id);
+        Squad squad = squadService.findById(squadId);
         SquadViewResponse squadViewResponse = new SquadViewResponse(squad);
         List<AgentViewResponse> statuses = agentService.getAgentStatusesBySquadId(squadId);
         model.addAttribute("squad", squadViewResponse);
