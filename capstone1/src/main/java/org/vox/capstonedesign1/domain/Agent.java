@@ -21,7 +21,7 @@ public class Agent {
     @JoinColumn(name = "squad_id", nullable = false)
     private Squad squad;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "device_serial_number", referencedColumnName = "device_serial_number", nullable = true)
     private Device device;
 }
