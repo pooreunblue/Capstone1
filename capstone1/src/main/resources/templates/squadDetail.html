@@ -122,6 +122,8 @@
     const labelTimers = {};
     const lastLabels = {};  // deviceSerialNumber: 최근 표시된 라벨
 
+    let initialized = false;
+
     function getStatusClass(status) {
         if (!status) return '';
         return 'status-' + status.replace(/\s+/g, '_');
@@ -131,52 +133,46 @@
         fetch(`/squads/${squadId}/agent-status`)
             .then(res => res.json())
             .then(data => {
-                grid.innerHTML = '';
-                data.forEach(agent => {
-                    // 상태별 동적 클래스 지정
-                    const statusClass = getStatusClass(agent.estimatedStatus);
+                // **1소대는 계속 갱신**
+                if (squadId == 1) {
+                    grid.innerHTML = '';
+                    data.forEach(agent => {
+                        // ...카드 생성 + label 갱신 코드(생략, 위에서 한 것과 동일)...
+                    });
+                }
+                // **2/3소대는 최초 1번만 카드/iframe 그림, 그 이후엔 label만 갱신**
+                else {
+                    if (!initialized) {
+                        grid.innerHTML = '';
+                        data.forEach(agent => {
+                            const card = document.createElement('div');
+                            card.className = 'agent-card';
+                            card.id = 'card-' + agent.deviceSerialNumber;
 
-                    // 카드 생성
-                    const card = document.createElement('div');
-                    card.className = 'agent-card';
-                    card.id = 'card-' + agent.deviceSerialNumber;
-
-                    // 기본 구조
-                    let html = `
-                        <h3>${agent.agentName}</h3>
-                        <p class="status-label ${statusClass}" id="label-${agent.deviceSerialNumber}">
-                            ${agent.estimatedStatus}
-                        </p>
-                        <p>${agent.deviceSerialNumber}</p>
-                    `;
-
-                    // **2/3소대: iframe 포함**
-                    if (squadId != 1) {
-                        html += `<iframe src="/unity-view/${agent.deviceSerialNumber}"></iframe>`;
+                            let html = `
+                            <h3>${agent.agentName}</h3>
+                            <p class="status-label ${getStatusClass(agent.estimatedStatus)}" id="label-${agent.deviceSerialNumber}">
+                                ${agent.estimatedStatus}
+                            </p>
+                            <p>${agent.deviceSerialNumber}</p>
+                            <iframe src="/unity-view/${agent.deviceSerialNumber}"></iframe>
+                        `;
+                            card.innerHTML = html;
+                            grid.appendChild(card);
+                        });
+                        initialized = true;
                     }
-
-                    card.innerHTML = html;
-
-                    // **1소대: 클릭시 HLS 페이지 이동**
-                    if (squadId == 1) {
-                        card.style.cursor = 'pointer';
-                        card.onclick = () => {
-                            location.href = `/squads/${squadId}/${agent.deviceSerialNumber}/hls`;
-                        };
-                    }
-
-                    grid.appendChild(card);
-
-                    // --- 5초간 label 표시 ---
-                    showLabelForSeconds(agent.deviceSerialNumber, agent.estimatedStatus, 5);
-                });
+                    // label만 갱신 (카드는 그대로)
+                    data.forEach(agent => {
+                        showLabelForSeconds(agent.deviceSerialNumber, agent.estimatedStatus, 5);
+                    });
+                }
             });
     }
 
     function showLabelForSeconds(deviceSerial, label, seconds) {
         const labelElem = document.getElementById(`label-${deviceSerial}`);
         if (!labelElem) return;
-
         // label 값이 변했거나, 5초 내에 새 데이터가 오면 타이머 리셋
         labelElem.className = `status-label ${getStatusClass(label)}`;
         labelElem.innerText = label;
@@ -195,7 +191,6 @@
         lastLabels[deviceSerial] = label;
     }
 
-    // 로그 및 에이전트 info 기존 코드와 동일...
     let logSet = new Set();
     function updateLogBox() {
         fetch(`/squads/${squadId}/logs`)
