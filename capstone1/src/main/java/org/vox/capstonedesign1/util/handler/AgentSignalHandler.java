@@ -39,7 +39,7 @@ public class AgentSignalHandler implements UdpMessageHandler {
 
     private ByteBuffer extractInformation(byte[] data) {
         log.info("수신된 UDP 데이터 길이: {}", data.length);
-        return ByteBuffer.wrap(data);
+        return ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN);
     }
 
     private void saveSignal(ByteBuffer buffer) {
