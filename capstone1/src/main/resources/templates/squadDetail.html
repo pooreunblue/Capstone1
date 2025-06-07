@@ -133,40 +133,32 @@
         fetch(`/squads/${squadId}/agent-status`)
             .then(res => res.json())
             .then(data => {
-                // **1소대는 계속 갱신**
-                if (squadId == 1) {
-                    grid.innerHTML = '';
-                    data.forEach(agent => {
-                        // ...카드 생성 + label 갱신 코드(생략, 위에서 한 것과 동일)...
-                    });
-                }
-                // **2/3소대는 최초 1번만 카드/iframe 그림, 그 이후엔 label만 갱신**
-                else {
-                    if (!initialized) {
-                        grid.innerHTML = '';
-                        data.forEach(agent => {
-                            const card = document.createElement('div');
-                            card.className = 'agent-card';
-                            card.id = 'card-' + agent.deviceSerialNumber;
-
-                            let html = `
-                            <h3>${agent.agentName}</h3>
-                            <p class="status-label ${getStatusClass(agent.estimatedStatus)}" id="label-${agent.deviceSerialNumber}">
-                                ${agent.estimatedStatus}
-                            </p>
-                            <p>${agent.deviceSerialNumber}</p>
-                            <iframe src="/unity-view/${agent.deviceSerialNumber}"></iframe>
-                        `;
-                            card.innerHTML = html;
-                            grid.appendChild(card);
-                        });
-                        initialized = true;
+                grid.innerHTML = '';
+                if (!Array.isArray(data)) return;
+                data.forEach(agent => {
+                    const card = document.createElement('div');
+                    card.className = 'agent-card';
+                    card.id = 'card-' + agent.deviceSerialNumber;
+                    // status-클래스 생성
+                    const statusClass = `status-${agent.estimatedStatus.replace(/ /g, "_")}`;
+                    card.innerHTML = `
+                    <h3>${agent.agentName}</h3>
+                    <p class="status-label ${statusClass}" id="label-${agent.deviceSerialNumber}">
+                        ${agent.estimatedStatus}
+                    </p>
+                    <p>${agent.deviceSerialNumber}</p>
+                `;
+                    if (squadId == 1) {
+                        card.style.cursor = 'pointer';
+                        card.onclick = () => {
+                            location.href = `/squads/${squadId}/${agent.deviceSerialNumber}/hls`;
+                        }
+                    } else {
+                        card.innerHTML += `<iframe src="/unity-view/${agent.deviceSerialNumber}"></iframe>`;
                     }
-                    // label만 갱신 (카드는 그대로)
-                    data.forEach(agent => {
-                        showLabelForSeconds(agent.deviceSerialNumber, agent.estimatedStatus, 5);
-                    });
-                }
+                    grid.appendChild(card);
+                    showLabelForSeconds(agent.deviceSerialNumber, agent.estimatedStatus, 5);
+                });
             });
     }
 
@@ -219,16 +211,21 @@
             });
     }
 
-    setInterval(() => {
+    if (squadId == 1) {
+        setInterval(() => {
+            updateAgentGrid();
+            updateLogBox();
+            updateAgentInfo();
+        }, 1000);
         updateAgentGrid();
         updateLogBox();
         updateAgentInfo();
-    }, 1000);
+    } else {
+        updateAgentGrid();
+        updateLogBox();
+        updateAgentInfo();
+    }
 
-    // 페이지 로딩시 최초 1회 호출
-    updateAgentGrid();
-    updateLogBox();
-    updateAgentInfo();
 </script>
 </body>
 </html>
