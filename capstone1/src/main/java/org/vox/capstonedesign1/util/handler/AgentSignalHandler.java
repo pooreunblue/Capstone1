@@ -38,6 +38,7 @@ public class AgentSignalHandler implements UdpMessageHandler {
     }
 
     private ByteBuffer extractInformation(byte[] data) {
+        log.info("수신된 UDP 데이터 길이: {}", data.length);
         return ByteBuffer.wrap(data);
     }
 
@@ -45,6 +46,7 @@ public class AgentSignalHandler implements UdpMessageHandler {
         double timestamp = buffer.getDouble();
         Long deviceId = (long) buffer.getInt();
         Long statusId = (long) buffer.getInt() + 1;
+        log.info("수신된 UDP 데이터: timestamp={}, deviceId={}, statusId={}", timestamp, deviceId, statusId);
         long seconds = (long) timestamp;
         long nanos = (long) ((timestamp % 1) * 1_000_000_000);  // 소수점 이하 나노초
         Instant instant = Instant.ofEpochSecond(seconds, nanos);
