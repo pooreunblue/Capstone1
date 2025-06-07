@@ -32,7 +32,7 @@ public class AgentSignal {
     @JoinColumn(name = "status_id", nullable = false)
     private EstimatedStatus estimatedStatus;
 
-    @Column(name = "time_stamp", nullable = false)
+    @Column(name = "time_stamp", columnDefinition = "DATETIME(6)", nullable = false)
     private LocalDateTime timeStamp;
 
     @Column(name = "streaming_frequency")
