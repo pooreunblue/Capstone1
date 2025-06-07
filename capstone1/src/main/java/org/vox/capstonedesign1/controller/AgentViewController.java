@@ -31,10 +31,10 @@ public class AgentViewController {
      * 특정 소대의 요원 전체 상태 조회
      */
     @GetMapping("/{squadId}")
-    public String getAllAgentStatusInSquad(@PathVariable Long id, Model model) {
+    public String getAllAgentStatusInSquad(@PathVariable Long squadId, Model model) {
         Squad squad = squadService.findById(id);
         SquadViewResponse squadViewResponse = new SquadViewResponse(squad);
-        List<AgentViewResponse> statuses = agentService.getAgentStatusesBySquadId(id);
+        List<AgentViewResponse> statuses = agentService.getAgentStatusesBySquadId(squadId);
         model.addAttribute("squad", squadViewResponse);
         model.addAttribute("statuses", statuses);
         return "squadDetail";
@@ -43,15 +43,15 @@ public class AgentViewController {
     // 1초마다 요약 정보를 가져오는 REST API (JSON 반환)
     @ResponseBody
     @GetMapping("/{squadId}/agent-status")
-    public List<AgentViewResponse> getSquadAgentStatus(@PathVariable Long id) {
-        return agentService.getAgentStatusesBySquadId(id);
+    public List<AgentViewResponse> getSquadAgentStatus(@PathVariable Long squadId) {
+        return agentService.getAgentStatusesBySquadId(squadId);
     }
 
     // 1초마다 로그 정보를 누적해서 가져오는 REST API (JSON 반환)
     @ResponseBody
     @GetMapping("/{squadId}/logs")
-    public List<AgentSignalLogResponse> getSquadLogs(@PathVariable Long id) {
+    public List<AgentSignalLogResponse> getSquadLogs(@PathVariable Long squadId) {
         // 최근 N건 누적 로그 가져오는 서비스 메소드 만들어서 호출
-        return agentService.getSquadAgentLogs(id); // 아래 AgentService 참고
+        return agentService.getSquadAgentLogs(squadId); // 아래 AgentService 참고
     }
 }
