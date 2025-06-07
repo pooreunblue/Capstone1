@@ -44,7 +44,7 @@ public class AgentSignalHandler implements UdpMessageHandler {
     private void saveSignal(ByteBuffer buffer) {
         double timestamp = buffer.getDouble();
         Long deviceId = (long) buffer.getInt();
-        Long statusId = (long) buffer.getInt();
+        Long statusId = (long) buffer.getInt() + 1;
         long seconds = (long) timestamp;
         long nanos = (long) ((timestamp % 1) * 1_000_000_000);  // 소수점 이하 나노초
         Instant instant = Instant.ofEpochSecond(seconds, nanos);

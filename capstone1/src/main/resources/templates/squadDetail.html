@@ -114,23 +114,31 @@
         </div>
     </div>
 </div>
-<script th:inline="javascript">
+<script>
     const squadId = [[${squad.id}]];
+    const grid = document.querySelector('.agent-grid');
+
+    // 각 agent 별 타이머/상태 기억
+    const labelTimers = {};
+    const lastLabels = {};  // deviceSerialNumber: 최근 표시된 라벨
 
     function updateAgentGrid() {
         fetch(`/squads/${squadId}/agent-status`)
             .then(res => res.json())
             .then(data => {
-                const grid = document.querySelector('.agent-grid');
                 grid.innerHTML = '';
                 data.forEach(agent => {
+                    // 카드 생성
                     const card = document.createElement('div');
                     card.className = 'agent-card';
+                    card.id = 'card-' + agent.deviceSerialNumber;
                     card.innerHTML = `
-                        <h3>${agent.agentName}</h3>
-                        <p class="status-${agent.estimatedStatus}">${agent.estimatedStatus}</p>
-                        <p>${agent.deviceSerialNumber}</p>
-                    `;
+                    <h3>${agent.agentName}</h3>
+                    <p class="status-label" id="label-${agent.deviceSerialNumber}">
+                        ${agent.estimatedStatus}
+                    </p>
+                    <p>${agent.deviceSerialNumber}</p>
+                `;
                     if (squadId == 1) {
                         card.style.cursor = 'pointer';
                         card.onclick = () => {
@@ -138,11 +146,36 @@
                         }
                     }
                     grid.appendChild(card);
+
+                    // --- 핵심: 5초 동안만 label 보여주기 ---
+                    showLabelForSeconds(agent.deviceSerialNumber, agent.estimatedStatus, 5);
                 });
             });
     }
 
-    // 로그 누적 갱신
+    function showLabelForSeconds(deviceSerial, label, seconds) {
+        const labelElem = document.getElementById(`label-${deviceSerial}`);
+        if (!labelElem) return;
+
+        // label 값이 변했거나, 5초 내에 새 데이터가 오면 무조건 타이머 리셋!
+        // (같은 값이라도 계속 fetch되면, 5초를 계속 연장)
+        labelElem.innerText = label;
+        labelElem.style.visibility = 'visible';
+
+        // 기존 타이머 제거 (무조건 새로 시작)
+        if (labelTimers[deviceSerial]) {
+            clearTimeout(labelTimers[deviceSerial]);
+        }
+        labelTimers[deviceSerial] = setTimeout(() => {
+            labelElem.style.visibility = '';
+            lastLabels[deviceSerial] = null;
+        }, seconds * 1000);
+
+        // 상태값 저장 (나중에 확장할 경우 사용)
+        lastLabels[deviceSerial] = label;
+    }
+
+    // 로그 및 에이전트 info 기존 코드와 동일...
     let logSet = new Set();
     function updateLogBox() {
         fetch(`/squads/${squadId}/logs`)
@@ -175,7 +208,7 @@
         updateAgentGrid();
         updateLogBox();
         updateAgentInfo();
-    }, 3000);
+    }, 1000);
 
     // 페이지 로딩시 최초 1회 호출
     updateAgentGrid();
