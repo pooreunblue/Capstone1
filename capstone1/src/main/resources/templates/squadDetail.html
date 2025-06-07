@@ -121,7 +121,7 @@
     const labelTimers = {};
     const lastLabels = {};  // deviceSerialNumber: 최근 표시된 라벨
     const lastReceived = {};
-    const TIMEOUT_MS = 7000; // 7초 이내 미수신 시 Stable로 표기
+    const TIMEOUT_MS = 5000; // 7초 이내 미수신 시 Stable로 표기
 
     let initialized = false;
 
@@ -233,7 +233,7 @@
             updateAgentGrid();
             updateLogBox();
             updateAgentInfo();
-        }, 1000);
+        }, 5000);
         updateAgentGrid();
         updateLogBox();
         updateAgentInfo();
