@@ -122,32 +122,52 @@
     const labelTimers = {};
     const lastLabels = {};  // deviceSerialNumber: 최근 표시된 라벨
 
+    function getStatusClass(status) {
+        if (!status) return '';
+        return 'status-' + status.replace(/\s+/g, '_');
+    }
+
     function updateAgentGrid() {
         fetch(`/squads/${squadId}/agent-status`)
             .then(res => res.json())
             .then(data => {
                 grid.innerHTML = '';
                 data.forEach(agent => {
+                    // 상태별 동적 클래스 지정
+                    const statusClass = getStatusClass(agent.estimatedStatus);
+
                     // 카드 생성
                     const card = document.createElement('div');
                     card.className = 'agent-card';
                     card.id = 'card-' + agent.deviceSerialNumber;
-                    card.innerHTML = `
-                    <h3>${agent.agentName}</h3>
-                    <p class="status-label" id="label-${agent.deviceSerialNumber}">
-                        ${agent.estimatedStatus}
-                    </p>
-                    <p>${agent.deviceSerialNumber}</p>
-                `;
+
+                    // 기본 구조
+                    let html = `
+                        <h3>${agent.agentName}</h3>
+                        <p class="status-label ${statusClass}" id="label-${agent.deviceSerialNumber}">
+                            ${agent.estimatedStatus}
+                        </p>
+                        <p>${agent.deviceSerialNumber}</p>
+                    `;
+
+                    // **2/3소대: iframe 포함**
+                    if (squadId != 1) {
+                        html += `<iframe src="/unity-view/${agent.deviceSerialNumber}"></iframe>`;
+                    }
+
+                    card.innerHTML = html;
+
+                    // **1소대: 클릭시 HLS 페이지 이동**
                     if (squadId == 1) {
                         card.style.cursor = 'pointer';
                         card.onclick = () => {
                             location.href = `/squads/${squadId}/${agent.deviceSerialNumber}/hls`;
-                        }
+                        };
                     }
+
                     grid.appendChild(card);
 
-                    // --- 핵심: 5초 동안만 label 보여주기 ---
+                    // --- 5초간 label 표시 ---
                     showLabelForSeconds(agent.deviceSerialNumber, agent.estimatedStatus, 5);
                 });
             });
@@ -157,8 +177,8 @@
         const labelElem = document.getElementById(`label-${deviceSerial}`);
         if (!labelElem) return;
 
-        // label 값이 변했거나, 5초 내에 새 데이터가 오면 무조건 타이머 리셋!
-        // (같은 값이라도 계속 fetch되면, 5초를 계속 연장)
+        // label 값이 변했거나, 5초 내에 새 데이터가 오면 타이머 리셋
+        labelElem.className = `status-label ${getStatusClass(label)}`;
         labelElem.innerText = label;
         labelElem.style.visibility = 'visible';
 
