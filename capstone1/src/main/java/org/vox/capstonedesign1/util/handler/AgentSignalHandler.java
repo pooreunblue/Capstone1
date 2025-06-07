@@ -52,6 +52,7 @@ public class AgentSignalHandler implements UdpMessageHandler {
         Instant instant = Instant.ofEpochSecond(seconds, nanos);
         LocalDateTime localTimestamp = instant.atZone(ZoneId.of("Asia/Seoul")).toLocalDateTime();
         String formattedTimestamp = localTimestamp.format(DateTimeFormatter.ISO_DATE_TIME);
+        log.info("수신된 시간: formattedTimestamp={}", timestamp);
         String deviceSerialNumber = deviceService.resolveDeviceSerialNumber(deviceId);
         // frequency 계산
         double frequency = frequencyCalculator.calculateFrequency(deviceSerialNumber, timestamp);
