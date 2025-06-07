@@ -117,21 +117,27 @@
 <script th:inline="javascript">
     const squadId = [[${squad.id}]];
 
-    // agent 상태 갱신
     function updateAgentGrid() {
         fetch(`/squads/${squadId}/agent-status`)
             .then(res => res.json())
             .then(data => {
-                // 각 agent-card에 agent 상태 반영
-                // data: [{agentName: ..., estimatedStatus: ..., deviceSerialNumber: ...}, ...]
-                document.querySelectorAll('.agent-card').forEach((card, idx) => {
-                    if (data[idx]) {
-                        card.querySelector('h3').innerText = data[idx].agentName;
-                        const statusElem = card.querySelector('p');
-                        statusElem.innerText = data[idx].estimatedStatus;
-                        statusElem.className = 'status-' + data[idx].estimatedStatus;
-                        card.querySelector('p:last-of-type').innerText = data[idx].deviceSerialNumber;
+                const grid = document.querySelector('.agent-grid');
+                grid.innerHTML = '';
+                data.forEach(agent => {
+                    const card = document.createElement('div');
+                    card.className = 'agent-card';
+                    card.innerHTML = `
+                        <h3>${agent.agentName}</h3>
+                        <p class="status-${agent.estimatedStatus}">${agent.estimatedStatus}</p>
+                        <p>${agent.deviceSerialNumber}</p>
+                    `;
+                    if (squadId == 1) {
+                        card.style.cursor = 'pointer';
+                        card.onclick = () => {
+                            location.href = `/squads/${squadId}/${agent.deviceSerialNumber}/hls`;
+                        }
                     }
+                    grid.appendChild(card);
                 });
             });
     }
