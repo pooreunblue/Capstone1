@@ -118,70 +118,71 @@
 <script>
     const squadId = [[${squad.id}]];
     const grid = document.querySelector('.agent-grid');
-    // agent별 label 타이머 및 현재 표시 상태 기억
+
+    // 각 agent별 마지막 상태, 타이머 관리
     const labelTimers = {};
-    const currentLabels = {};
+    const lastLabels = {};
+    const LABEL_TIMEOUT_SEC = 5;
 
-    // 상태 UI 갱신 및 5초 타이머
-    function updateAgentStatus(agent) {
-        const { deviceSerialNumber, agentName, estimatedStatus } = agent;
-        let statusClass = "status-" + (estimatedStatus ? estimatedStatus.replaceAll(" ", "_") : "Stable");
-        let labelElem = document.getElementById(`label-${deviceSerialNumber}`);
-
-        // 현재 카드가 없으면 새로 만듦
-        let card = document.getElementById(`card-${deviceSerialNumber}`);
-        if (!card) {
-            card = document.createElement('div');
-            card.className = 'agent-card';
-            card.id = `card-${deviceSerialNumber}`;
-            card.innerHTML = `
-                <h3>${agentName}</h3>
-                <p class="status-label ${statusClass}" id="label-${deviceSerialNumber}">
-                    ${estimatedStatus}
-                </p>
-                <p>${deviceSerialNumber}</p>
-            `;
-            if (parseInt(squadId) === 1) {
-                card.style.cursor = 'pointer';
-                card.addEventListener('click', function() {
-                    window.location.href = `/squads/${squadId}/${deviceSerialNumber}/hls`;
-                });
-            } else {
-                card.innerHTML += `<iframe src="/unity-view/${deviceSerialNumber}"></iframe>`;
-            }
-            grid.appendChild(card);
-            labelElem = document.getElementById(`label-${deviceSerialNumber}`);
-        } else {
-            // 상태 라벨만 갱신
-            labelElem.className = `status-label ${statusClass}`;
-            labelElem.innerText = estimatedStatus;
-        }
-
-        // 타이머 갱신
-        if (labelTimers[deviceSerialNumber]) {
-            clearTimeout(labelTimers[deviceSerialNumber]);
-        }
-        currentLabels[deviceSerialNumber] = estimatedStatus;
-        // 5초 후 Stable로
-        labelTimers[deviceSerialNumber] = setTimeout(() => {
-            if (currentLabels[deviceSerialNumber] === estimatedStatus) { // 5초 동안 상태 변동 없으면만
-                labelElem.innerText = "Stable";
-                labelElem.className = "status-label status-Stable";
-                currentLabels[deviceSerialNumber] = "Stable";
-            }
-        }, 5000);
+    // 상태(Stable 포함) CSS class명 반환
+    function getStatusClass(status) {
+        if (!status) status = "Stable";
+        return "status-" + status.replaceAll(" ", "_");
     }
 
-    // agentGrid 전체 갱신
+    // 실제 렌더링 및 Stable 변환 로직
     function updateAgentGrid() {
         fetch(`/squads/${squadId}/agent-status`)
             .then(res => res.json())
             .then(data => {
-                // 기존 카드 삭제(없어지지 않도록 하려면 grid.innerHTML 지우지 마세요!)
-                // grid.innerHTML = '';
-                // 기존 agent 카드에 대해 상태만 갱신
-                data.forEach(agent => updateAgentStatus(agent));
+                grid.innerHTML = '';
+                data.forEach(agent => {
+                    const deviceSerial = agent.deviceSerialNumber;
+                    const status = agent.estimatedStatus;
+                    // label 변화 감지
+                    const isNewLabel = lastLabels[deviceSerial] !== status;
+                    lastLabels[deviceSerial] = status;
+
+                    // 카드 생성
+                    const card = document.createElement('div');
+                    card.className = 'agent-card';
+                    card.innerHTML = `
+                        <h3>${agent.agentName}</h3>
+                        <p class="status-label ${getStatusClass(status)}" id="label-${deviceSerial}">
+                            ${status}
+                        </p>
+                        <p>${deviceSerial}</p>
+                    `;
+                    if (parseInt(squadId) === 1) {
+                        card.style.cursor = 'pointer';
+                        card.addEventListener('click', function() {
+                            window.location.href = `/squads/${squadId}/${deviceSerial}/hls`;
+                        });
+                    } else {
+                        card.innerHTML += `<iframe src="/unity-view/${deviceSerial}"></iframe>`;
+                    }
+                    grid.appendChild(card);
+
+                    // 타이머 관리: 새 label 수신시(혹은 최초)만 Stable 변환 예약
+                    if (isNewLabel || !labelTimers[deviceSerial]) {
+                        if (labelTimers[deviceSerial]) clearTimeout(labelTimers[deviceSerial]);
+                        scheduleStable(deviceSerial, agent.agentName);
+                    }
+                });
             });
+    }
+
+    // 5초 후 Stable 표시, 새 label 오면 타이머 갱신
+    function scheduleStable(deviceSerial, agentName) {
+        labelTimers[deviceSerial] = setTimeout(() => {
+            // Stable로 변경
+            const labelElem = document.getElementById(`label-${deviceSerial}`);
+            if (labelElem) {
+                labelElem.innerText = "Stable";
+                labelElem.className = "status-label status-Stable";
+            }
+            lastLabels[deviceSerial] = "Stable";
+        }, LABEL_TIMEOUT_SEC * 1000);
     }
 
     // 로그박스: 최근 로그 위로, 20개 초과 시 스크롤 (최신 로그 맨 위)
