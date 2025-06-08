@@ -184,21 +184,24 @@
             });
     }
 
-    // 로그/에이전트 info 기존 로직 그대로 사용
-    let logSet = new Set();
+    // 로그박스: 최근 로그 위로, 20개 초과 시 스크롤 (최신 로그 맨 위)
     function updateLogBox() {
         fetch(`/squads/${squadId}/logs`)
             .then(res => res.json())
             .then(logs => {
                 let logBox = document.getElementById('log-box');
-                logBox.innerHTML = ""; // 항상 최신 로그가 맨 위로 오도록
-                const maxLogs = 20;
-                logs.slice(-maxLogs).reverse().forEach(log => {
+                // 최신 20개만 사용
+                let sliced = logs.slice(0, 20);
+                logBox.innerHTML = "";
+                for (let i = 0; i < sliced.length; i++) {
+                    const log = sliced[i];
                     const logStr = `${log.timeStamp} ${log.agentName}: ${log.estimatedStatus}`;
-                    logBox.innerHTML += `<div>${logStr}</div>`;
-                });
-                // 스크롤 항상 맨 위
-                logBox.scrollTop = 0;
+                    // 최신 로그 맨 위에
+                    logBox.innerHTML = `<div>${logStr}</div>` + logBox.innerHTML;
+                }
+                // 항상 스크롤박스 유지 (넘치면 스크롤)
+                logBox.style.overflowY = "auto";
+                logBox.style.maxHeight = "350px";
             });
     }
 
@@ -214,13 +217,14 @@
             });
     }
 
+    // 1초마다 갱신
     setInterval(() => {
         updateAgentGrid();
         updateLogBox();
         updateAgentInfo();
     }, 1000);
 
-    // 최초 1회 호출
+    // 초기 로딩도 1회 실행
     updateAgentGrid();
     updateLogBox();
     updateAgentInfo();
