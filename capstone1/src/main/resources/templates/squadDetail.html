@@ -170,30 +170,40 @@
 
     // 실제로 agent 카드 그리는 함수 (코드 가독성 위해 분리)
     function renderAgentCards(data) {
-        grid.innerHTML = '';
-        data.forEach(agent => {
-            const deviceSerial = agent.deviceSerialNumber;
-            let showLabel = lastShownLabel[deviceSerial] || "Stable";
+        if(parseInt(squadId) === 1) {
+            grid.innerHTML = '';
+            data.forEach(agent => {
+                const deviceSerial = agent.deviceSerialNumber;
+                let showLabel = lastShownLabel[deviceSerial] || "Stable";
 
-            const card = document.createElement('div');
-            card.className = 'agent-card';
-            card.innerHTML = `
+                const card = document.createElement('div');
+                card.className = 'agent-card';
+                card.innerHTML = `
             <h3>${agent.agentName}</h3>
             <p class="status-label status-${showLabel.replaceAll(' ', '_')}" id="label-${deviceSerial}">
                 ${showLabel}
             </p>
             <p>${deviceSerial}</p>
         `;
-            if (parseInt(squadId) === 1) {
                 card.style.cursor = 'pointer';
-                card.addEventListener('click', function() {
+                card.addEventListener('click', function () {
                     window.location.href = `/squads/${squadId}/${deviceSerial}/hls`;
                 });
-            } else {
-                card.innerHTML += `<iframe src="/unity-view/${deviceSerial}"></iframe>`;
-            }
-            grid.appendChild(card);
-        });
+                grid.appendChild(card);
+            });
+        } else {
+            // 2소대/3소대는 label만 갱신
+            data.forEach(agent => {
+                const deviceSerial = agent.deviceSerialNumber;
+                let showLabel = lastShownLabel[deviceSerial] || "Stable";
+                // 이미 생성된 카드의 라벨만 변경 (최초 렌더는 직접 해둬야 함)
+                const labelEl = document.getElementById('label-' + deviceSerial);
+                if (labelEl) {
+                    labelEl.className = `status-label status-${showLabel.replaceAll(' ', '_')}`;
+                    labelEl.textContent = showLabel;
+                }
+            });
+        }
     }
 
 
