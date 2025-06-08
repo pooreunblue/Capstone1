@@ -117,103 +117,80 @@
 </div>
 <script>
     const squadId = [[${squad.id}]];
-    const grid = document.querySelector('.agent-grid');
-    // agent별 label 타이머 관리
-    const labelTimers = {};
-    // 마지막 상태 체크 (미수신 판단용)
     const lastLabelTimestamps = {};
-    // 미수신 간주 임계시간(초)
+    const lastStatusByDevice = {};
     const LABEL_TIMEOUT_SEC = 5;
-
-    // 상태값이 없거나 null, undefined, 혹은 마지막 수신이 너무 오래 전이면 Stable 처리
-    function getSafeStatus(deviceSerial, status, timestamp) {
-        const now = Date.now();
-        if (!status || status === "" || typeof status === "undefined") return "Stable";
-        // 마지막 라벨 수신 시간 체크
-        if (
-            lastLabelTimestamps[deviceSerial] &&
-            now - lastLabelTimestamps[deviceSerial] > LABEL_TIMEOUT_SEC * 1000
-        ) {
-            return "Stable";
-        }
-        return status;
-    }
 
     function updateAgentGrid() {
         fetch(`/squads/${squadId}/agent-status`)
             .then(res => res.json())
             .then(data => {
+                const now = Date.now();
                 const grid = document.querySelector('.agent-grid');
                 grid.innerHTML = '';
 
                 data.forEach(agent => {
-                    // 타임스탬프 기억 (마지막 수신 체크용)
-                    lastLabelTimestamps[agent.deviceSerialNumber] = Date.now();
+                    const serial = agent.deviceSerialNumber;
+                    const currStatus = agent.estimatedStatus;
 
-                    // 상태값 보정
-                    let status = getSafeStatus(agent.deviceSerialNumber, agent.estimatedStatus, agent.timeStamp);
-                    // 상태에 맞는 CSS 클래스명 만들기
-                    let statusClass = "status-" + (status ? status.replaceAll(" ", "_") : "Stable");
+                    // 라벨 값이 바뀌었으면 즉시 타임스탬프 갱신
+                    if (lastStatusByDevice[serial] !== currStatus) {
+                        lastStatusByDevice[serial] = currStatus;
+                        lastLabelTimestamps[serial] = now;
+                    }
+
+                    // 이전 상태와 동일하게 5초간 유지된 경우 Stable 표시
+                    let statusToShow;
+                    if (
+                        lastStatusByDevice[serial] === currStatus &&
+                        lastLabelTimestamps[serial] &&
+                        now - lastLabelTimestamps[serial] > LABEL_TIMEOUT_SEC * 1000
+                    ) {
+                        statusToShow = "Stable";
+                    } else {
+                        statusToShow = currStatus;
+                    }
+                    const statusClass = "status-" + (statusToShow ? statusToShow.replaceAll(" ", "_") : "Stable");
 
                     // 카드 생성
                     const card = document.createElement('div');
                     card.className = 'agent-card';
-
-                    // 기본 카드 내용
                     card.innerHTML = `
-                        <h3>${agent.agentName}</h3>
-                        <p class="status-label ${statusClass}" id="label-${agent.deviceSerialNumber}">
-                            ${status}
-                        </p>
-                        <p>${agent.deviceSerialNumber}</p>
-                    `;
-
+                    <h3>${agent.agentName}</h3>
+                    <p class="status-label ${statusClass}" id="label-${serial}">${statusToShow}</p>
+                    <p>${serial}</p>
+                `;
                     if (parseInt(squadId) === 1) {
-                        // 1소대: hls
                         card.style.cursor = 'pointer';
                         card.addEventListener('click', function() {
-                            window.location.href = `/squads/${squadId}/${agent.deviceSerialNumber}/hls`;
+                            window.location.href = `/squads/${squadId}/${serial}/hls`;
                         });
                     } else {
-                        // 2, 3소대: iframe 추가
-                        card.innerHTML += `<iframe src="/unity-view/${agent.deviceSerialNumber}"></iframe>`;
+                        card.innerHTML += `<iframe src="/unity-view/${serial}"></iframe>`;
                     }
                     grid.appendChild(card);
-
-                    // 상태라벨 5초 출력(새 레이블 오면 타이머 리셋)
-                    showLabelForSeconds(agent.deviceSerialNumber, status, 5);
                 });
             });
     }
 
-    function showLabelForSeconds(deviceSerial, label, seconds) {
-        const labelElem = document.getElementById(`label-${deviceSerial}`);
-        if (!labelElem) return;
-        labelElem.innerText = label;
-        labelElem.style.visibility = 'visible';
-
-        // 기존 타이머 제거 (무조건 새로 시작)
-        if (labelTimers[deviceSerial]) {
-            clearTimeout(labelTimers[deviceSerial]);
-        }
-        labelTimers[deviceSerial] = setTimeout(() => {
-            labelElem.style.visibility = 'hidden';
-        }, seconds * 1000);
-    }
-
-    let logSet = new Set();
+    // 로그박스: 최근 로그 위로, 20개 초과 시 스크롤 (최신 로그 맨 위)
     function updateLogBox() {
         fetch(`/squads/${squadId}/logs`)
             .then(res => res.json())
             .then(logs => {
                 let logBox = document.getElementById('log-box');
-                logs.forEach(log => {
+                // 최신 20개만 사용
+                let sliced = logs.slice(0, 20);
+                logBox.innerHTML = "";
+                for (let i = 0; i < sliced.length; i++) {
+                    const log = sliced[i];
                     const logStr = `${log.timeStamp} ${log.agentName}: ${log.estimatedStatus}`;
-                    if (!logSet.has(logStr)) {
-                        logBox.innerHTML += `<div>${logStr}</div>`;
-                        logSet.add(logStr);
-                    }
-                });
+                    // 최신 로그 맨 위에
+                    logBox.innerHTML = `<div>${logStr}</div>` + logBox.innerHTML;
+                }
+                // 항상 스크롤박스 유지 (넘치면 스크롤)
+                logBox.style.overflowY = "auto";
+                logBox.style.maxHeight = "350px";
             });
     }
 
@@ -229,21 +206,18 @@
             });
     }
 
-    if (squadId == 1) {
-        setInterval(() => {
-            updateAgentGrid();
-            updateLogBox();
-            updateAgentInfo();
-        }, 1000);
+    // 1초마다 갱신
+    setInterval(() => {
         updateAgentGrid();
         updateLogBox();
         updateAgentInfo();
-    } else {
-        updateAgentGrid();
-        updateLogBox();
-        updateAgentInfo();
-    }
+    }, 1000);
 
+    // 초기 로딩도 1회 실행
+    updateAgentGrid();
+    updateLogBox();
+    updateAgentInfo();
 </script>
+
 </body>
 </html>
