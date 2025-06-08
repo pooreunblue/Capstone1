@@ -119,96 +119,83 @@
     const squadId = [[${squad.id}]];
     const grid = document.querySelector('.agent-grid');
 
-    const labelState = {}; // { deviceSerial: { status, timer, stable, lastUpdate } }
+    const lastShownLabel = {};      // 화면에 표시 중인 label (Stable 포함)
+    const lastActiveLabel = {};     // 실제로 마지막으로 들어온 label (Stable 제외)
+    const lastActiveTime = {};      // 마지막으로 실제 label(Stable 제외) 수신한 시각
+    const stableTimers = {};        // Stable 타이머
+
     const LABEL_TIMEOUT_SEC = 5;
 
-    // agent 상태 갱신
     function updateAgentGrid() {
         fetch(`/squads/${squadId}/agent-status`)
             .then(res => res.json())
             .then(data => {
                 grid.innerHTML = '';
+                const now = Date.now();
+
                 data.forEach(agent => {
                     const deviceSerial = agent.deviceSerialNumber;
-                    const status = agent.estimatedStatus;
+                    const currentLabel = agent.estimatedStatus;
 
-                    // 최초 등록
-                    if (!labelState[deviceSerial]) {
-                        labelState[deviceSerial] = {
-                            status: status,
-                            timer: null,
-                            stable: false,
-                            lastUpdate: Date.now()
-                        };
-                        displayLabel(deviceSerial, status);
-                        startStableTimer(deviceSerial, status);
-                    } else {
-                        // Stable이 아닌 상태일 때, label이 달라졌다면 즉시 반영
-                        if (!labelState[deviceSerial].stable && status !== labelState[deviceSerial].status) {
-                            displayLabel(deviceSerial, status);
-                            startStableTimer(deviceSerial, status);
-                            labelState[deviceSerial].status = status;
-                            labelState[deviceSerial].lastUpdate = Date.now();
-                        }
-                        // Stable 상태일 때, 새로운 label(Stable 아님)이 오면 Stable 해제 + 즉시 반영
-                        else if (labelState[deviceSerial].stable && status !== "Stable" && status !== labelState[deviceSerial].status) {
-                            labelState[deviceSerial].stable = false;
-                            displayLabel(deviceSerial, status);
-                            startStableTimer(deviceSerial, status);
-                            labelState[deviceSerial].status = status;
-                            labelState[deviceSerial].lastUpdate = Date.now();
-                        }
-                        // 그 외(Stable이거나, label 변화 없음)는 아무것도 안 함 (화면 그대로)
+                    // 처음 label이거나 종류가 바뀐 label(Stable 제외)
+                    if (
+                        currentLabel !== 'Stable' &&
+                        lastActiveLabel[deviceSerial] !== currentLabel
+                    ) {
+                        lastActiveLabel[deviceSerial] = currentLabel;
+                        lastActiveTime[deviceSerial] = now;
+                        lastShownLabel[deviceSerial] = currentLabel;
+
+                        // 타이머 리셋
+                        if (stableTimers[deviceSerial]) clearTimeout(stableTimers[deviceSerial]);
+                        stableTimers[deviceSerial] = setTimeout(() => {
+                            // 5초 내에 다른 label 안오면 Stable로
+                            lastShownLabel[deviceSerial] = "Stable";
+                            renderAgentCards(data);
+                        }, LABEL_TIMEOUT_SEC * 1000);
                     }
 
-                    // 카드 그리기
-                    const card = document.createElement('div');
-                    card.className = 'agent-card';
-                    card.innerHTML = `
-                    <h3>${agent.agentName}</h3>
-                    <p class="status-label status-${labelState[deviceSerial].status.replaceAll(' ', '_')}" id="label-${deviceSerial}">
-                        ${labelState[deviceSerial].status}
-                    </p>
-                    <p>${deviceSerial}</p>
-                `;
-                    if (parseInt(squadId) === 1) {
-                        card.style.cursor = 'pointer';
-                        card.addEventListener('click', function() {
-                            window.location.href = `/squads/${squadId}/${deviceSerial}/hls`;
-                        });
-                    } else {
-                        card.innerHTML += `<iframe src="/unity-view/${deviceSerial}"></iframe>`;
+                    // 5초 경과 후 아직 Stable이 아니면 Stable로 변경
+                    if (
+                        lastShownLabel[deviceSerial] !== 'Stable' &&
+                        now - (lastActiveTime[deviceSerial] || 0) > LABEL_TIMEOUT_SEC * 1000
+                    ) {
+                        lastShownLabel[deviceSerial] = "Stable";
                     }
-                    grid.appendChild(card);
                 });
+
+                renderAgentCards(data);
             });
     }
 
-    // label 화면에 표시 및 상태 기록
-    function displayLabel(deviceSerial, status) {
-        labelState[deviceSerial].status = status;
-        // 화면에 업데이트
-        const labelElem = document.getElementById(`label-${deviceSerial}`);
-        if (labelElem) {
-            labelElem.innerText = status;
-            labelElem.className = `status-label status-${status.replaceAll(' ', '_')}`;
-        }
+    // 실제로 agent 카드 그리는 함수 (코드 가독성 위해 분리)
+    function renderAgentCards(data) {
+        grid.innerHTML = '';
+        data.forEach(agent => {
+            const deviceSerial = agent.deviceSerialNumber;
+            let showLabel = lastShownLabel[deviceSerial] || "Stable";
+
+            const card = document.createElement('div');
+            card.className = 'agent-card';
+            card.innerHTML = `
+            <h3>${agent.agentName}</h3>
+            <p class="status-label status-${showLabel.replaceAll(' ', '_')}" id="label-${deviceSerial}">
+                ${showLabel}
+            </p>
+            <p>${deviceSerial}</p>
+        `;
+            if (parseInt(squadId) === 1) {
+                card.style.cursor = 'pointer';
+                card.addEventListener('click', function() {
+                    window.location.href = `/squads/${squadId}/${deviceSerial}/hls`;
+                });
+            } else {
+                card.innerHTML += `<iframe src="/unity-view/${deviceSerial}"></iframe>`;
+            }
+            grid.appendChild(card);
+        });
     }
 
-    // Stable 타이머 관리
-    function startStableTimer(deviceSerial, label) {
-        if (labelState[deviceSerial].timer) clearTimeout(labelState[deviceSerial].timer);
-        labelState[deviceSerial].timer = setTimeout(() => {
-            // 5초 동안 label이 안 바뀌면 Stable 표시
-            labelState[deviceSerial].stable = true;
-            labelState[deviceSerial].status = "Stable";
-            const labelElem = document.getElementById(`label-${deviceSerial}`);
-            if (labelElem) {
-                labelElem.innerText = "Stable";
-                labelElem.className = "status-label status-Stable";
-            }
-        }, LABEL_TIMEOUT_SEC * 1000);
-    }
 
     // 로그박스: 최근 로그 위로, 20개 초과 시 스크롤 (최신 로그 맨 위)
     function updateLogBox() {
