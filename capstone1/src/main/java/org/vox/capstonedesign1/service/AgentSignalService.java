@@ -43,23 +43,6 @@ public class AgentSignalService {
         agentSignalRepository.save(agentSignal);
     }
 
-    public Optional<AgentSignal> findLatestSignalByAgent(Agent agent) {
-        return agentSignalRepository.findTopByAgentOrderByTimeStampDesc(agent);
-    }
-
-//    public AgentViewResponse getLatestSignalByDeviceSerialNumber(String deviceSerialNumber) {
-//        AgentSignal latestSignal = agentSignalRepository.findTopByDevice_DeviceSerialNumberOrderByTimeStampDesc(deviceSerialNumber)
-//                .orElseThrow(() -> new IllegalArgumentException("deviceSerialNumber" + deviceSerialNumber + "의 데이터가 없습니다."));
-//        return new AgentViewResponse(latestSignal);
-//    }
-//
-//    public List<AgentViewResponse> getLatestSignalsForDevices(List<String> deviceSerialNumbers) {
-//        return deviceSerialNumbers.stream()
-//                .map(this::getLatestSignalByDeviceSerialNumber)
-//                .filter(Objects::nonNull)
-//                .collect(Collectors.toList());
-//    }
-
     private Agent fetchAgentBySerialNumber(AgentSignalRequest request) {
         String deviceSerialNumber = request.getDeviceSerialNumber();
         return agentRepository.findByDevice_DeviceSerialNumber(deviceSerialNumber)

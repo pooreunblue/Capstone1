@@ -120,12 +120,10 @@
     const grid = document.querySelector('.agent-grid');
     // agent별 label 타이머 관리
     const labelTimers = {};
-
     // 마지막 상태 체크 (미수신 판단용)
     const lastLabelTimestamps = {};
-
     // 미수신 간주 임계시간(초)
-    const LABEL_TIMEOUT_SEC = 5.5;
+    const LABEL_TIMEOUT_SEC = 5;
 
     // 상태값이 없거나 null, undefined, 혹은 마지막 수신이 너무 오래 전이면 Stable 처리
     function getSafeStatus(deviceSerial, status, timestamp) {
@@ -171,7 +169,7 @@
                     `;
 
                     if (parseInt(squadId) === 1) {
-                        // 1소대: 클릭시 hls
+                        // 1소대: hls
                         card.style.cursor = 'pointer';
                         card.addEventListener('click', function() {
                             window.location.href = `/squads/${squadId}/${agent.deviceSerialNumber}/hls`;
