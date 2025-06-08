@@ -119,9 +119,12 @@
     const squadId = [[${squad.id}]];
     const grid = document.querySelector('.agent-grid');
 
-    const lastLabels = {};
-    const labelTimers = {};
-    const forcedStable = {}; // deviceSerial: true면 Stable 상태 유지
+    const lastLabel = {};          // 마지막 표시된 label
+    const lastLabelType = {};      // 마지막 표시된 label 종류
+    const labelTimers = {};        // 타이머
+    const forcedStable = {};       // Stable 강제 상태 여부
+
+    const LABEL_TIMEOUT_SEC = 5;
 
     function updateAgentGrid() {
         fetch(`/squads/${squadId}/agent-status`)
@@ -130,33 +133,36 @@
                 grid.innerHTML = '';
                 data.forEach(agent => {
                     const deviceSerial = agent.deviceSerialNumber;
-                    const labelElemId = `label-${deviceSerial}`;
                     let status = agent.estimatedStatus;
 
-                    // "Stable"로 강제된 상태면, 실제로 새 label이 들어올 때까지 무시
+                    // 이전에 Stable로 강제된 상태라면, 새로운 종류의 label이 올 때만 해제
                     if (forcedStable[deviceSerial]) {
-                        // 새 label이 오면 강제 Stable 해제, 아니면 계속 Stable
-                        if (status !== lastLabels[deviceSerial] && status !== "Stable") {
+                        // 새로운 label(Stable이 아니고, 이전과 종류가 다르면)만 반영
+                        if (status !== "Stable" && status !== lastLabelType[deviceSerial]) {
                             forcedStable[deviceSerial] = false;
-                            lastLabels[deviceSerial] = status;
+                            setLabel(deviceSerial, status);
+                            startStableTimer(deviceSerial, status);
                         } else {
                             status = "Stable";
+                            setLabel(deviceSerial, status);
                         }
                     } else {
-                        // 원래대로: label이 바뀌면 타이머 리셋
-                        if (status !== lastLabels[deviceSerial]) {
-                            lastLabels[deviceSerial] = status;
-                            if (labelTimers[deviceSerial]) clearTimeout(labelTimers[deviceSerial]);
-                            scheduleStable(deviceSerial);
+                        // label이 처음이거나, 종류가 바뀌었으면 갱신 + 타이머 리셋
+                        if (
+                            typeof lastLabelType[deviceSerial] === "undefined" ||
+                            (status !== "Stable" && status !== lastLabelType[deviceSerial])
+                        ) {
+                            setLabel(deviceSerial, status);
+                            startStableTimer(deviceSerial, status);
                         }
                     }
 
-                    // 카드 생성/업데이트
+                    // 카드 렌더링
                     const card = document.createElement('div');
                     card.className = 'agent-card';
                     card.innerHTML = `
                     <h3>${agent.agentName}</h3>
-                    <p class="status-label ${getStatusClass(status)}" id="${labelElemId}">
+                    <p class="status-label status-${status.replaceAll(' ', '_')}" id="label-${deviceSerial}">
                         ${status}
                     </p>
                     <p>${deviceSerial}</p>
@@ -174,23 +180,25 @@
             });
     }
 
-    function scheduleStable(deviceSerial) {
+    function setLabel(deviceSerial, status) {
+        lastLabel[deviceSerial] = status;
+        lastLabelType[deviceSerial] = status;
+        // 화면도 업데이트
+        const labelElem = document.getElementById(`label-${deviceSerial}`);
+        if (labelElem) {
+            labelElem.innerText = status;
+            labelElem.className = `status-label status-${status.replaceAll(' ', '_')}`;
+        }
+    }
+
+    function startStableTimer(deviceSerial, status) {
+        if (labelTimers[deviceSerial]) clearTimeout(labelTimers[deviceSerial]);
         labelTimers[deviceSerial] = setTimeout(() => {
-            forcedStable[deviceSerial] = true; // Stable 강제
-            const labelElem = document.getElementById(`label-${deviceSerial}`);
-            if (labelElem) {
-                labelElem.innerText = "Stable";
-                labelElem.className = "status-label status-Stable";
-            }
-            lastLabels[deviceSerial] = "Stable";
+            // 5초 동안 다른 label 안 오면 Stable로!
+            forcedStable[deviceSerial] = true;
+            setLabel(deviceSerial, "Stable");
         }, LABEL_TIMEOUT_SEC * 1000);
     }
-
-    function getStatusClass(status) {
-        if (!status) status = "Stable";
-        return "status-" + status.replaceAll(" ", "_");
-    }
-
     // 로그박스: 최근 로그 위로, 20개 초과 시 스크롤 (최신 로그 맨 위)
     function updateLogBox() {
         fetch(`/squads/${squadId}/logs`)
